@@ -1,4 +1,5 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
+import 'package:couple_schedule_app/features/auth/presentation/widgets/sign_up_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,7 +46,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 32),
 
-                _SignUpField(
+                SignUpField(
                   label: '이메일',
                   hintText: '이메일을 입력해주세요.',
                   prefixIcon: Icons.mail_outline,
@@ -54,7 +55,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 20),
 
-                _SignUpField(
+                SignUpField(
                   label: '비밀번호',
                   hintText: '비밀번호를 입력해주세요.',
                   prefixIcon: Icons.lock_outline,
@@ -63,7 +64,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 20),
 
-                _SignUpField(
+                SignUpField(
                   label: '비밀번호 확인',
                   hintText: '비밀번호를 다시 입력해주세요.',
                   prefixIcon: Icons.lock_outline,
@@ -72,7 +73,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 20),
 
-                _SignUpField(
+                SignUpField(
                   label: '닉네임',
                   hintText: '닉네임 입력해주세요.',
                   prefixIcon: Icons.person_outline,
@@ -104,89 +105,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _SignUpField extends StatefulWidget {
-  const _SignUpField({
-    required this.label,
-    required this.hintText,
-    required this.prefixIcon,
-    this.keyboardType,
-    this.obscureText = false,
-  });
-
-  final String label;
-  final String hintText;
-  final IconData prefixIcon;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-
-  @override
-  State<_SignUpField> createState() => _SignUpFieldState();
-}
-
-class _SignUpFieldState extends State<_SignUpField> {
-  late bool _obscureText;
-
-  @override
-  void initState() {
-    super.initState();
-    _obscureText = widget.obscureText;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.label,
-          style: textTheme.titleSmall?.copyWith(color: AppColors.textPrimary),
-        ),
-
-        const SizedBox(height: 8),
-
-        TextFormField(
-          keyboardType: widget.keyboardType,
-          obscureText: _obscureText,
-          decoration: InputDecoration(
-            hintText: widget.hintText,
-
-            prefixIcon: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Icon(
-                widget.prefixIcon,
-                size: 18,
-                color: AppColors.textTertiary,
-              ),
-            ),
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 18,
-              minHeight: 18,
-            ),
-            suffixIcon: widget.obscureText
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
-                    icon: Icon(
-                      _obscureText
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                    ),
-                    color: AppColors.textTertiary,
-                    iconSize: 20,
-                  )
-                : null,
-          ),
-        ),
-      ],
     );
   }
 }
