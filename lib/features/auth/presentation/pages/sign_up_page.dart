@@ -1,5 +1,5 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
-import 'package:couple_schedule_app/features/auth/presentation/widgets/sign_up_field.dart';
+import 'package:couple_schedule_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,7 +46,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 32),
 
-                SignUpField(
+                AuthField(
                   label: '이메일',
                   hintText: '이메일을 입력해주세요.',
                   prefixIcon: Icons.mail_outline,
@@ -55,7 +55,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 20),
 
-                SignUpField(
+                AuthField(
                   label: '비밀번호',
                   hintText: '비밀번호를 입력해주세요.',
                   prefixIcon: Icons.lock_outline,
@@ -64,7 +64,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 20),
 
-                SignUpField(
+                AuthField(
                   label: '비밀번호 확인',
                   hintText: '비밀번호를 다시 입력해주세요.',
                   prefixIcon: Icons.lock_outline,
@@ -73,7 +73,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 20),
 
-                SignUpField(
+                AuthField(
                   label: '닉네임',
                   hintText: '닉네임 입력해주세요.',
                   prefixIcon: Icons.person_outline,

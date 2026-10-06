@@ -1,27 +1,27 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class SignUpField extends StatefulWidget {
-  const SignUpField({
+class AuthField extends StatefulWidget {
+  final String? label;
+  final String hintText;
+  final IconData prefixIcon;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+
+  const AuthField({
     super.key,
-    required this.label,
+    this.label,
     required this.hintText,
     required this.prefixIcon,
     this.keyboardType,
     this.obscureText = false,
   });
 
-  final String label;
-  final String hintText;
-  final IconData prefixIcon;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-
   @override
-  State<SignUpField> createState() => SignUpFieldState();
+  State<AuthField> createState() => SignUpFieldState();
 }
 
-class SignUpFieldState extends State<SignUpField> {
+class SignUpFieldState extends State<AuthField> {
   late bool _obscureText;
 
   @override
@@ -37,12 +37,13 @@ class SignUpFieldState extends State<SignUpField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: textTheme.titleSmall?.copyWith(color: AppColors.textPrimary),
-        ),
-
-        const SizedBox(height: 8),
+        if (widget.label != null) ...[
+          Text(
+            widget.label!,
+            style: textTheme.titleSmall?.copyWith(color: AppColors.textPrimary),
+          ),
+          const SizedBox(height: 8),
+        ],
 
         TextFormField(
           keyboardType: widget.keyboardType,
