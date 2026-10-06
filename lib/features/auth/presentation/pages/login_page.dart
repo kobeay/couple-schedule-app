@@ -117,28 +117,43 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                 Column(
                   children: [
-                    // TODO: 소셜 로그인 버튼 크기 및 스타일 최종 조정
-                    GestureDetector(
-                      onTap: () {
-                        // TODO: Google 로그인
-                      },
-                      child: Image.asset(
-                        'assets/images/google_sign_in.png',
-                        height: 48,
-                        fit: BoxFit.contain,
+                    OutlinedButton(
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/google_logo.png',
+                            width: 25,
+                            height: 25,
+                          ),
+                          const SizedBox(width: 5),
+                          const Text('Google로 계속하기'),
+                        ],
                       ),
                     ),
 
                     const SizedBox(height: 10),
 
-                    GestureDetector(
-                      onTap: () {
-                        // TODO: Google 로그인
-                      },
-                      child: Image.asset(
-                        'assets/images/kakao_login_en_medium.png',
-                        height: 48,
-                        fit: BoxFit.contain,
+                    FilledButton(
+                      onPressed: () {},
+                      style: theme.outlinedButtonTheme.style?.copyWith(
+                        backgroundColor: const WidgetStatePropertyAll(
+                          AppColors.kakao,
+                        ),
+                        side: const WidgetStatePropertyAll(BorderSide.none),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/kakao_logo.png',
+                            width: 25,
+                            height: 25,
+                          ),
+                          const SizedBox(width: 5),
+                          const Text('카카오로 계속하기'),
+                        ],
                       ),
                     ),
                   ],
