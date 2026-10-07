@@ -1,9 +1,7 @@
-import 'package:couple_schedule_app/app/widgets/app_bottom_navigation_bar.dart';
 import 'package:couple_schedule_app/app/widgets/couple_animation.dart';
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/home/presentation/widgets/schedule_group.dart';
 import 'package:couple_schedule_app/features/home/presentation/widgets/schedule_row.dart';
-import 'package:couple_schedule_app/features/schedule/presentation/pages/schedule_page2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -148,27 +146,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
         ),
-      ),
-
-      bottomNavigationBar: AppBottomNavigationBar(
-        selectedIndex: 0,
-        onDestinationSelected: (index) {
-          switch (index) {
-            case 0:
-              break;
-
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SchedulePage()),
-              );
-              break;
-
-            case 2:
-              // TODO: 마이페이지 이동
-              break;
-          }
-        },
       ),
     );
   }
