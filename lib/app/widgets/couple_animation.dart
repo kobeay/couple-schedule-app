@@ -3,14 +3,14 @@ import 'dart:math' as math;
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class LoginCoupleAnimation extends StatefulWidget {
-  const LoginCoupleAnimation({super.key});
+class CoupleAnimation extends StatefulWidget {
+  const CoupleAnimation({super.key});
 
   @override
-  State<LoginCoupleAnimation> createState() => _LoginCoupleAnimationState();
+  State<CoupleAnimation> createState() => CoupleAnimationState();
 }
 
-class _LoginCoupleAnimationState extends State<LoginCoupleAnimation>
+class CoupleAnimationState extends State<CoupleAnimation>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 

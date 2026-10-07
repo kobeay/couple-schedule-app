@@ -1,6 +1,8 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
+import 'package:couple_schedule_app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:couple_schedule_app/features/auth/presentation/widgets/auth_field.dart';
-import 'package:couple_schedule_app/features/auth/presentation/widgets/login_couple_animation.dart';
+import 'package:couple_schedule_app/app/widgets/couple_animation.dart';
+import 'package:couple_schedule_app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,7 +35,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               children: [
                 Column(
                   children: [
-                    const LoginCoupleAnimation(),
+                    const CoupleAnimation(),
 
                     const SizedBox(height: 10),
 
@@ -91,7 +93,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                 const SizedBox(height: 24),
 
-                FilledButton(onPressed: () {}, child: const Text('로그인')),
+                FilledButton(
+                  // 인증 연동 전 홈 화면 확인용 이동입니다.
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  ),
+                  child: const Text('로그인'),
+                ),
 
                 const SizedBox(height: 24),
 
@@ -172,7 +181,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(width: 5),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpPage(),
+                          ),
+                        );
+                      },
                       style: linkStyle.copyWith(
                         textStyle: WidgetStatePropertyAll(
                           textTheme.labelMedium,
