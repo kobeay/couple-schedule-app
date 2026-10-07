@@ -1,6 +1,4 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
-import 'package:couple_schedule_app/app/widgets/app_bottom_navigation_bar.dart';
-import 'package:couple_schedule_app/features/home/presentation/pages/home_page.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/month_calendar.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/schedule_card.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/schedule_filter.dart';
@@ -144,26 +142,6 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: AppBottomNavigationBar(
-        selectedIndex: 1,
-        onDestinationSelected: (index) {
-          switch (index) {
-            case 0:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-              break;
-
-            case 1:
-              break;
-
-            case 2:
-              // TODO: 마이페이지 이동
-              break;
-          }
-        },
       ),
     );
   }

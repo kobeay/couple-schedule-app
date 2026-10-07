@@ -1,6 +1,5 @@
 import 'package:couple_schedule_app/app/theme/app_theme.dart';
-import 'package:couple_schedule_app/features/home/presentation/pages/home_page.dart';
-import 'package:couple_schedule_app/features/schedule/presentation/pages/schedule_page.dart';
+import 'package:couple_schedule_app/features/main/presentation/pages/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Couple Schedule',
       theme: AppTheme.light,
-      home: SchedulePage(),
+      home: MainPage(),
     );
   }
 }
