@@ -1,4 +1,5 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/pages/schedule_form_page.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/month_calendar.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/schedule_card.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/schedule_filter.dart';
@@ -33,6 +34,19 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        tooltip: '일정 추가',
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        shape: const CircleBorder(),
+        onPressed: () => Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (context) => ScheduleFormPage(initialDate: _selectedDay),
+            fullscreenDialog: true,
+          ),
+        ),
+        child: const Icon(Icons.add_rounded, size: 30),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -119,6 +133,14 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                   title: '아르바이트',
                   time: '13:00 ~ 18:00',
                   owner: ScheduleOwner.partner,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ScheduleFormPage(),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 12),
                 ScheduleCard(
