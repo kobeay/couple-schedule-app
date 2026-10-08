@@ -7,6 +7,7 @@ class MonthCalendar extends StatelessWidget {
   final DateTime selectedDay;
   final ValueChanged<DateTime> onDaySelected;
   final ValueChanged<DateTime> onPageChanged;
+  final bool showMarkers;
 
   const MonthCalendar({
     super.key,
@@ -14,6 +15,7 @@ class MonthCalendar extends StatelessWidget {
     required this.selectedDay,
     required this.onDaySelected,
     required this.onPageChanged,
+    this.showMarkers = true,
   });
 
   static const _markers = <int, List<Color>>{
@@ -138,7 +140,7 @@ class MonthCalendar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (final color in markers)
+            for (final color in showMarkers ? markers : <Color>[])
               Container(
                 width: 4,
                 height: 4,
