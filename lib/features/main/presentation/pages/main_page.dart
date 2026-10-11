@@ -1,5 +1,6 @@
 import 'package:couple_schedule_app/app/widgets/app_bottom_navigation_bar.dart';
 import 'package:couple_schedule_app/features/home/presentation/pages/home_page.dart';
+import 'package:couple_schedule_app/features/my/presentation/pages/my_page.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/pages/schedule_page.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  final _pages = const [HomePage(), SchedulePage()];
+  final _pages = const [HomePage(), SchedulePage(), MyPage()];
 
   @override
   Widget build(BuildContext context) {
