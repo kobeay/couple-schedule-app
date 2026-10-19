@@ -181,13 +181,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(width: 5),
                     TextButton(
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        final result = await Navigator.push<bool>(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const SignUpPage(),
                           ),
                         );
+
+                        if (!context.mounted) return;
+
+                        if (result == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('회원가입이 완료되었습니다. 로그인해 주세요.'),
+                            ),
+                          );
+                        }
                       },
                       style: linkStyle.copyWith(
                         textStyle: WidgetStatePropertyAll(
