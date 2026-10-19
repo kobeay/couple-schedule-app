@@ -7,6 +7,9 @@ class AuthField extends StatefulWidget {
   final IconData prefixIcon;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
+  final String? errorText;
 
   const AuthField({
     super.key,
@@ -15,6 +18,9 @@ class AuthField extends StatefulWidget {
     required this.prefixIcon,
     this.keyboardType,
     this.obscureText = false,
+    this.controller,
+    this.validator,
+    this.errorText,
   });
 
   @override
@@ -23,6 +29,8 @@ class AuthField extends StatefulWidget {
 
 class SignUpFieldState extends State<AuthField> {
   late bool _obscureText;
+
+  String? _validationError;
 
   @override
   void initState() {
@@ -33,6 +41,9 @@ class SignUpFieldState extends State<AuthField> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+    final displayError = widget.errorText ?? _validationError;
+    final hasError = displayError != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,10 +57,58 @@ class SignUpFieldState extends State<AuthField> {
         ],
 
         TextFormField(
+          controller: widget.controller,
+          validator: (value) {
+            final error = widget.validator?.call(value);
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _validationError != error) {
+                setState(() {
+                  _validationError = error;
+                });
+              }
+            });
+
+            return error;
+          },
           keyboardType: widget.keyboardType,
           obscureText: _obscureText,
           decoration: InputDecoration(
             hintText: widget.hintText,
+
+            errorStyle: const TextStyle(fontSize: 0, height: 0),
+
+            errorMaxLines: 1,
+
+            enabledBorder: hasError
+                ? OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.destructive),
+                  )
+                : null,
+
+            focusedBorder: hasError
+                ? OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.destructive,
+                      width: 2,
+                    ),
+                  )
+                : null,
+
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.destructive),
+            ),
+
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: AppColors.destructive,
+                width: 2,
+              ),
+            ),
 
             prefixIcon: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -59,10 +118,12 @@ class SignUpFieldState extends State<AuthField> {
                 color: AppColors.textTertiary,
               ),
             ),
+
             prefixIconConstraints: const BoxConstraints(
               minWidth: 18,
               minHeight: 18,
             ),
+
             suffixIcon: widget.obscureText
                 ? IconButton(
                     onPressed: () {
@@ -81,6 +142,31 @@ class SignUpFieldState extends State<AuthField> {
                 : null,
           ),
         ),
+
+        if (displayError != null) ...[
+          const SizedBox(height: 6),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 16,
+                color: AppColors.destructive,
+              ),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  displayError,
+                  style: const TextStyle(
+                    color: AppColors.destructive,
+                    fontSize: 12,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
