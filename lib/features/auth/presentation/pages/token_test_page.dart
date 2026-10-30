@@ -22,13 +22,21 @@ class _TokenTestPageState extends State<TokenTestPage> {
     try {
       final response = await AuthApi().getMyInfo();
 
-      debugPrint('API 요청 성공: ${response.statusCode}');
-      debugPrint('서버 응답: ${response.data}');
+      debugPrint('API 요청 성공');
+      debugPrint('사용자 ID: ${response.id}');
+      debugPrint('이메일: ${response.email}');
+      debugPrint('닉네임: ${response.nickname}');
+      debugPrint('초대코드: ${response.inviteCode}');
 
       if (!mounted) return;
 
       setState(() {
-        _result = 'API 요청 성공!\n상태 코드: ${response.statusCode}';
+        _result =
+            'API 요청 성공!\n'
+            '사용자 ID: ${response.id}\n'
+            '이메일: ${response.email}\n'
+            '닉네임: ${response.nickname}\n'
+            '초대코드: ${response.inviteCode}';
       });
     } on DioException catch (e) {
       debugPrint('API 요청 실패: ${e.response?.statusCode}');

@@ -3,6 +3,7 @@ import 'package:couple_schedule_app/features/auth/data/datasources/auth_api.dart
 import 'package:couple_schedule_app/features/auth/data/models/login_request.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_response.dart';
 import 'package:couple_schedule_app/features/auth/data/models/sign_up_request.dart';
+import 'package:couple_schedule_app/features/auth/data/models/user_response.dart';
 import 'package:dio/dio.dart';
 
 class AuthRepository {
@@ -46,5 +47,9 @@ class AuthRepository {
 
       rethrow;
     }
+  }
+
+  Future<UserResponse> getMyInfo() async {
+    return await _authApi.getMyInfo();
   }
 }

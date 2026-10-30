@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:couple_schedule_app/features/auth/data/models/sign_up_request.dart';
-import 'package:couple_schedule_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:couple_schedule_app/features/auth/presentation/providers/auth_repository_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

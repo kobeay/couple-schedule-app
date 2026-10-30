@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:couple_schedule_app/features/auth/data/models/login_request.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_response.dart';
-import 'package:couple_schedule_app/features/auth/presentation/pages/login_page.dart';
-import 'package:couple_schedule_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:couple_schedule_app/features/auth/presentation/providers/auth_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final loginProvider = AsyncNotifierProvider<LoginProvider, LoginResponse?>(
