@@ -2,6 +2,7 @@ import 'package:couple_schedule_app/core/network/dio_client.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_request.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_response.dart';
 import 'package:couple_schedule_app/features/auth/data/models/sign_up_request.dart';
+import 'package:couple_schedule_app/features/auth/data/models/user_response.dart';
 import 'package:dio/dio.dart';
 
 class AuthApi {
@@ -27,9 +28,9 @@ class AuthApi {
     return LoginResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
-  Future<Response<dynamic>> getMyInfo() async {
+  Future<UserResponse> getMyInfo() async {
     final response = await _dio.get('/api/users/me');
-    return response;
+    return UserResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
   Future<LoginResponse> refresh(String refreshToken) async {
