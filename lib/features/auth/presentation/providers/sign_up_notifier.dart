@@ -6,11 +6,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final signUpProvider = AsyncNotifierProvider<SignUpProvider, void>(
-  SignUpProvider.new,
+final signUpProvider = AsyncNotifierProvider<SignUpNotifier, void>(
+  SignUpNotifier.new,
 );
 
-class SignUpProvider extends AsyncNotifier<void> {
+class SignUpNotifier extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() {}
 

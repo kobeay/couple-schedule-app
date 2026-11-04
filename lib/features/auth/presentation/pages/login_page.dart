@@ -2,7 +2,7 @@ import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_request.dart';
 import 'package:couple_schedule_app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:couple_schedule_app/features/auth/presentation/pages/token_test_page.dart';
-import 'package:couple_schedule_app/features/auth/presentation/providers/login_provider.dart';
+import 'package:couple_schedule_app/features/auth/presentation/providers/login_notifier.dart';
 import 'package:couple_schedule_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:couple_schedule_app/app/widgets/couple_animation.dart';
 import 'package:couple_schedule_app/features/main/presentation/pages/main_page.dart';

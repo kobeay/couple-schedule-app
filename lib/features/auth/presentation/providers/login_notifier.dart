@@ -5,11 +5,11 @@ import 'package:couple_schedule_app/features/auth/data/models/login_response.dar
 import 'package:couple_schedule_app/features/auth/presentation/providers/auth_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final loginProvider = AsyncNotifierProvider<LoginProvider, LoginResponse?>(
-  LoginProvider.new,
+final loginProvider = AsyncNotifierProvider<LoginNotifier, LoginResponse?>(
+  LoginNotifier.new,
 );
 
-class LoginProvider extends AsyncNotifier<LoginResponse?> {
+class LoginNotifier extends AsyncNotifier<LoginResponse?> {
   @override
   FutureOr<LoginResponse?> build() {
     return null;
