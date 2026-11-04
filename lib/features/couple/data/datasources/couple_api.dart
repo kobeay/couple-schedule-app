@@ -39,4 +39,8 @@ class CoupleApi {
   Future<void> rejectInvitation(int invitationId) async {
     await _dio.post('/api/couples/invitations/$invitationId/reject');
   }
+
+  Future<void> disconnectCouple() async {
+    await _dio.delete('/api/couples/me');
+  }
 }

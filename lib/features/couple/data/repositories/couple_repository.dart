@@ -28,4 +28,8 @@ class CoupleRepository {
   Future<void> rejectInvitation(int invitationId) {
     return _coupleApi.rejectInvitation(invitationId);
   }
+
+  Future<void> disconnectCouple() {
+    return _coupleApi.disconnectCouple();
+  }
 }
