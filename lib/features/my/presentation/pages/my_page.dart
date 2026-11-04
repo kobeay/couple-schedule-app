@@ -1,5 +1,5 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
-import 'package:couple_schedule_app/features/my/presentation/pages/couple_management_page.dart';
+import 'package:couple_schedule_app/features/couple/presentation/pages/couple_management_page.dart';
 import 'package:couple_schedule_app/features/my/presentation/widgets/profile_avatar.dart';
 import 'package:couple_schedule_app/features/my/presentation/widgets/setting_row.dart';
 import 'package:flutter/material.dart';

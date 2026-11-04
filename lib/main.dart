@@ -1,7 +1,7 @@
 import 'package:couple_schedule_app/app/theme/app_theme.dart';
 import 'package:couple_schedule_app/core/network/dio_client.dart';
 import 'package:couple_schedule_app/features/auth/presentation/pages/login_page.dart';
-import 'package:couple_schedule_app/features/auth/presentation/providers/auto_login_provider.dart';
+import 'package:couple_schedule_app/features/auth/presentation/providers/auto_login_notifier.dart';
 import 'package:couple_schedule_app/features/main/presentation/pages/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

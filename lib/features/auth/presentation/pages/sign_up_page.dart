@@ -1,6 +1,6 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/auth/data/models/sign_up_request.dart';
-import 'package:couple_schedule_app/features/auth/presentation/providers/sign_up_provider.dart';
+import 'package:couple_schedule_app/features/auth/presentation/providers/sign_up_notifier.dart';
 import 'package:couple_schedule_app/features/auth/presentation/validators/auth_validator.dart';
 import 'package:couple_schedule_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:dio/dio.dart';
