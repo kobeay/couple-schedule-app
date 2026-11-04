@@ -1,6 +1,7 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/auth/presentation/providers/user_info_provider.dart';
 import 'package:couple_schedule_app/features/couple/presentation/pages/couple_invitation_page.dart';
+import 'package:couple_schedule_app/features/couple/presentation/providers/couple_disconnection_notifier.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_invitation_action_notifier.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/received_invitations_provider.dart';
@@ -26,6 +27,7 @@ class _CoupleManagementPageState extends ConsumerState<CoupleManagementPage> {
     final coupleInfo = ref.watch(coupleProvider);
     final receivedInvitaions = ref.watch(receivedInvitaionsProvider);
     final invitationActionState = ref.watch(coupleInvitationActionProvider);
+    final disconnectionState = ref.watch(coupleDisconnectionNotifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -444,7 +446,71 @@ class _CoupleManagementPageState extends ConsumerState<CoupleManagementPage> {
                       children: [
                         const SizedBox(height: 20),
                         OutlinedButton(
-                          onPressed: () {},
+                          onPressed: disconnectionState.isLoading
+                              ? null
+                              : () async {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (dialogContext) => AlertDialog(
+                                      title: Text('커플 연결을 해제할까요?'),
+                                      content: Text(
+                                        '연결을 해제하면 서로의 일정을 더 이상 공유할 수 없어요',
+                                        style: textTheme.bodyMedium?.copyWith(
+                                          color: AppColors.textSecondary,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                            dialogContext,
+                                            false,
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            foregroundColor:
+                                                AppColors.textSecondary,
+                                          ),
+                                          child: const Text('취소'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                            dialogContext,
+                                            true,
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            foregroundColor:
+                                                AppColors.destructive,
+                                          ),
+                                          child: const Text('연결 해제'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (confirmed != true || !mounted) return;
+
+                                  await ref
+                                      .read(
+                                        coupleDisconnectionNotifier.notifier,
+                                      )
+                                      .disconnectCouple();
+
+                                  if (!context.mounted) return;
+
+                                  final result = ref.read(
+                                    coupleDisconnectionNotifier,
+                                  );
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        result.hasError
+                                            ? '커플 연결을 해제하지 못했어요'
+                                            : '커플 연결을 해제했어요',
+                                      ),
+                                    ),
+                                  );
+                                },
                           style: OutlinedButton.styleFrom(
                             backgroundColor: AppColors.background,
                             foregroundColor: AppColors.destructive,
