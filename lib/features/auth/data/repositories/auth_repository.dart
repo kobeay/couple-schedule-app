@@ -1,3 +1,4 @@
+import 'package:couple_schedule_app/core/network/auth_interceptor.dart';
 import 'package:couple_schedule_app/core/storage/token_storage.dart';
 import 'package:couple_schedule_app/features/auth/data/datasources/auth_api.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_request.dart';
@@ -39,9 +40,12 @@ class AuthRepository {
 
       return true;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        await _tokenStorage.deleteToken();
+      final refreshTokenMissing = e.error == RefreshFailure.missingRefreshToken;
+      final refreshRejected =
+          e.requestOptions.path.endsWith('/api/users/refresh') &&
+          e.response?.statusCode == 401;
 
+      if (refreshTokenMissing || refreshRejected) {
         return false;
       }
 
