@@ -3,6 +3,8 @@ import 'package:couple_schedule_app/features/auth/data/datasources/auth_api.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+enum RefreshFailure { missingRefreshToken }
+
 class AuthInterceptor extends Interceptor {
   final TokenStorage _tokenStorage;
   final AuthApi _authApi;
@@ -40,7 +42,7 @@ class AuthInterceptor extends Interceptor {
     final refreshToken = await _tokenStorage.getRefreshToken();
 
     if (refreshToken == null) {
-      throw StateError('Refresh Token이 없습니다.');
+      throw RefreshFailure.missingRefreshToken;
     }
 
     try {
@@ -104,10 +106,16 @@ class AuthInterceptor extends Interceptor {
       final response = await _dio.fetch<dynamic>(options);
 
       return handler.resolve(response);
-    } catch (e) {
+    } on DioException catch (e) {
       debugPrint('토큰 재발급 또는 API 재요청 실패: $e');
 
-      return handler.next(err);
+      return handler.next(e);
+    } catch (e, stackTrace) {
+      debugPrint('토큰 재발급 또는 API 재요청 실패: $e');
+
+      return handler.next(
+        DioException(requestOptions: options, error: e, stackTrace: stackTrace),
+      );
     }
   }
 }
