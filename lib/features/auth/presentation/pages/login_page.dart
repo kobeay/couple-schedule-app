@@ -121,6 +121,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         prefixIcon: Icons.mail_outline,
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailController,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return '이메일을 입력해 주세요.';
+                          }
+                          return null;
+                        },
                       ),
 
                       const SizedBox(height: 12),
@@ -130,6 +136,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         prefixIcon: Icons.lock_outline,
                         obscureText: true,
                         controller: _passwordController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '비밀번호를 입력해 주세요.';
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
