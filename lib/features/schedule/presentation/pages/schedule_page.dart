@@ -41,7 +41,7 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
         shape: const CircleBorder(),
         onPressed: () => Navigator.of(context).push<void>(
           MaterialPageRoute(
-            builder: (context) => ScheduleFormPage(initialDate: _selectedDay),
+            builder: (context) => ScheduleFormPage(),
             fullscreenDialog: true,
           ),
         ),
@@ -137,7 +137,8 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ScheduleFormPage(),
+                        builder: (context) =>
+                            const ScheduleFormPage(isEditing: true),
                       ),
                     );
                   },
