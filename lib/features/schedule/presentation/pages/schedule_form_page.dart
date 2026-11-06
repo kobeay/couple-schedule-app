@@ -29,7 +29,7 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
 
-  ScheduleType _selectedType = ScheduleType.PERSONAL;
+  ScheduleType _selectedType = ScheduleType.personal;
 
   @override
   void dispose() {
@@ -335,22 +335,22 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                     children: [
                       ScheduleTypeButton(
                         label: '개인',
-                        isSelected: _selectedType == ScheduleType.PERSONAL,
+                        isSelected: _selectedType == ScheduleType.personal,
                         isShared: false,
                         onPressed: () {
                           setState(() {
-                            _selectedType = ScheduleType.PERSONAL;
+                            _selectedType = ScheduleType.personal;
                           });
                         },
                       ),
                       const SizedBox(width: 8),
                       ScheduleTypeButton(
                         label: '우리',
-                        isSelected: _selectedType == ScheduleType.COUPLE,
+                        isSelected: _selectedType == ScheduleType.couple,
                         isShared: true,
                         onPressed: () {
                           setState(() {
-                            _selectedType = ScheduleType.COUPLE;
+                            _selectedType = ScheduleType.couple;
                           });
                         },
                       ),

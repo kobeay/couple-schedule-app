@@ -1,1 +1,1 @@
-enum ScheduleType { PERSONAL, COUPLE }
+enum ScheduleType { personal, couple }

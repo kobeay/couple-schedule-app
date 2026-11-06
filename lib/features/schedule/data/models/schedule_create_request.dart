@@ -24,7 +24,7 @@ class ScheduleCreateRequest {
       'startTime': startTime,
       'endTime': endTime,
       'memo': memo,
-      'type': type.name,
+      'type': type.name.toUpperCase(),
     };
   }
 }
