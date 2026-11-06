@@ -148,12 +148,6 @@ class SignUpFieldState extends State<AuthField> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 16,
-                color: AppColors.destructive,
-              ),
-              const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   displayError,

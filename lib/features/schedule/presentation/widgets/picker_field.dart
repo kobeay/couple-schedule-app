@@ -5,12 +5,14 @@ class PickerField extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback onTap;
+  final bool isPlaceholder;
 
   const PickerField({
     super.key,
     required this.label,
     required this.icon,
     required this.onTap,
+    this.isPlaceholder = false,
   });
 
   @override
@@ -22,7 +24,12 @@ class PickerField extends StatelessWidget {
         decoration: InputDecoration(
           suffixIcon: Icon(icon, size: 18, color: AppColors.textIcon),
         ),
-        child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: isPlaceholder ? Theme.of(context).hintColor : null,
+          ),
+        ),
       ),
     );
   }

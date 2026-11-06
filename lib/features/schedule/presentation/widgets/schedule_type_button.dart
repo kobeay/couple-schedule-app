@@ -44,7 +44,7 @@ class ScheduleTypeButton extends StatelessWidget {
             ),
           ),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         child: Text(label),
       ),
     );
