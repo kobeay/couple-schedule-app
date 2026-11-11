@@ -1,4 +1,6 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_response.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -8,6 +10,8 @@ class MonthCalendar extends StatelessWidget {
   final ValueChanged<DateTime> onDaySelected;
   final ValueChanged<DateTime> onPageChanged;
   final bool showMarkers;
+  final List<ScheduleListResponse> schedules;
+  final int? currentUserId;
 
   const MonthCalendar({
     super.key,
@@ -16,24 +20,39 @@ class MonthCalendar extends StatelessWidget {
     required this.onDaySelected,
     required this.onPageChanged,
     this.showMarkers = true,
+    required this.schedules,
+    this.currentUserId,
   });
 
-  static const _markers = <int, List<Color>>{
-    5: [
-      AppColors.mySchedule,
-      AppColors.partnerSchedule,
-      AppColors.sharedSchedule,
-    ],
-    8: [AppColors.sharedSchedule],
-    12: [AppColors.partnerSchedule],
-    15: [
-      AppColors.mySchedule,
-      AppColors.sharedSchedule,
-      AppColors.partnerSchedule,
-    ],
-    20: [AppColors.sharedSchedule],
-    25: [AppColors.mySchedule],
-  };
+  List<Color> _getMarkers(DateTime day, int? currentUserId) {
+    if (currentUserId == null) {
+      return [];
+    }
+
+    final daySchedules = schedules.where(
+      (scheduls) => DateUtils.isSameDay(scheduls.date, day),
+    );
+
+    final markers = <Color>[];
+
+    for (final schedule in daySchedules) {
+      Color color;
+
+      if (schedule.type == ScheduleType.couple) {
+        color = AppColors.sharedSchedule;
+      } else if (schedule.userId == currentUserId) {
+        color = AppColors.mySchedule;
+      } else {
+        color = AppColors.partnerSchedule;
+      }
+
+      if (!markers.contains(color)) {
+        markers.add(color);
+      }
+    }
+
+    return markers;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,18 +102,18 @@ class MonthCalendar extends StatelessWidget {
           );
         },
         defaultBuilder: (context, day, focusedDay) {
-          return _buildDay(context, day, _markers[day.day] ?? const []);
+          return _buildDay(context, day, _getMarkers(day, currentUserId));
         },
         selectedBuilder: (context, day, focusedDay) {
           return _buildDay(
             context,
             day,
-            _markers[day.day] ?? const [],
+            _getMarkers(day, currentUserId),
             selected: true,
           );
         },
         todayBuilder: (context, day, focusedDay) {
-          return _buildDay(context, day, _markers[day.day] ?? const []);
+          return _buildDay(context, day, _getMarkers(day, currentUserId));
         },
       ),
     );
