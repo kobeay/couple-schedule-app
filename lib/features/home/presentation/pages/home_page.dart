@@ -198,8 +198,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     final aTime = a.startTime;
                                     final bTime = b.startTime;
 
-                                    if (aTime == null && bTime == null)
+                                    if (aTime == null && bTime == null) {
                                       return 0;
+                                    }
                                     if (aTime == null) return 1;
                                     if (bTime == null) return -1;
 
