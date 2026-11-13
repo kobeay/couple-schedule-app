@@ -7,6 +7,8 @@ class ScheduleCard extends StatelessWidget {
   final String title;
   final String time;
   final ScheduleOwner owner;
+  final String partnerNickname;
+  final bool isConnectedCouple;
   final VoidCallback? onTap;
 
   const ScheduleCard({
@@ -14,6 +16,8 @@ class ScheduleCard extends StatelessWidget {
     required this.title,
     required this.time,
     required this.owner,
+    required this.partnerNickname,
+    required this.isConnectedCouple,
     this.onTap,
   });
 
@@ -21,44 +25,43 @@ class ScheduleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Card(
-      margin: EdgeInsets.zero,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              Container(
-                width: 6,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: switch (owner) {
-                    ScheduleOwner.me => AppColors.mySchedule,
-                    ScheduleOwner.partner => AppColors.partnerSchedule,
-                    ScheduleOwner.couple => AppColors.sharedSchedule,
-                  },
-                  borderRadius: BorderRadius.circular(3),
-                ),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 6,
+              height: 36,
+              decoration: BoxDecoration(
+                color: switch (owner) {
+                  ScheduleOwner.me => AppColors.mySchedule,
+                  ScheduleOwner.partner => AppColors.partnerSchedule,
+                  ScheduleOwner.couple => AppColors.sharedSchedule,
+                },
+                borderRadius: BorderRadius.circular(3),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: textTheme.titleSmall),
-                    const SizedBox(height: 2),
-                    Text(
-                      time,
-                      style: textTheme.bodySmall?.copyWith(
-                        fontSize: 12,
-                        color: AppColors.textTertiary,
-                      ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: textTheme.titleSmall),
+                  const SizedBox(height: 2),
+                  Text(
+                    time,
+                    style: textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      color: AppColors.textTertiary,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
+            ),
+            const SizedBox(width: 12),
+            if (isConnectedCouple) ...[
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -75,7 +78,7 @@ class ScheduleCard extends StatelessWidget {
                 child: Text(
                   switch (owner) {
                     ScheduleOwner.me => '나',
-                    ScheduleOwner.partner => '여자친구',
+                    ScheduleOwner.partner => partnerNickname,
                     ScheduleOwner.couple => '우리',
                   },
                   style: textTheme.labelSmall?.copyWith(
@@ -88,7 +91,7 @@ class ScheduleCard extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+          ],
         ),
       ),
     );

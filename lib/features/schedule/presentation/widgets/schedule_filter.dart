@@ -6,6 +6,7 @@ class ScheduleFilter extends StatelessWidget {
   final Color backgroundColor;
   final Color foregroundColor;
   final bool selected;
+  final VoidCallback onPressed;
 
   const ScheduleFilter({
     super.key,
@@ -13,6 +14,7 @@ class ScheduleFilter extends StatelessWidget {
     required this.backgroundColor,
     required this.foregroundColor,
     this.selected = false,
+    required this.onPressed,
   });
 
   @override
@@ -20,7 +22,7 @@ class ScheduleFilter extends StatelessWidget {
     final theme = Theme.of(context);
 
     return TextButton(
-      onPressed: () {},
+      onPressed: onPressed,
       style: TextButton.styleFrom(
         backgroundColor: selected ? backgroundColor : AppColors.surfaceMuted,
         foregroundColor: selected ? foregroundColor : AppColors.textSecondary,

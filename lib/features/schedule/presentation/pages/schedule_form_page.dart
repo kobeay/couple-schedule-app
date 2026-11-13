@@ -1,4 +1,5 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
+import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_create_request.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_create_notifier.dart';
@@ -55,6 +56,10 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
 
     final createState = ref.watch(scheduleCreateNotifier);
 
+    final couple = ref.watch(coupleProvider);
+
+    final isConnectedCouple = couple.value?.connected == true;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -95,7 +100,9 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                       startTime: _formatTime(_startTime),
                       endTime: _formatTime(_endTime),
                       memo: _memoController.text.trim(),
-                      type: _selectedType,
+                      type: isConnectedCouple
+                          ? _selectedType
+                          : ScheduleType.personal,
                     );
 
                     await ref
@@ -329,33 +336,35 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
 
                   const SizedBox(height: 25),
 
-                  Text('일정 종류', style: textTheme.bodyMedium),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      ScheduleTypeButton(
-                        label: '개인',
-                        isSelected: _selectedType == ScheduleType.personal,
-                        isShared: false,
-                        onPressed: () {
-                          setState(() {
-                            _selectedType = ScheduleType.personal;
-                          });
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      ScheduleTypeButton(
-                        label: '우리',
-                        isSelected: _selectedType == ScheduleType.couple,
-                        isShared: true,
-                        onPressed: () {
-                          setState(() {
-                            _selectedType = ScheduleType.couple;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                  if (isConnectedCouple) ...[
+                    Text('일정 종류', style: textTheme.bodyMedium),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        ScheduleTypeButton(
+                          label: '개인',
+                          isSelected: _selectedType == ScheduleType.personal,
+                          isShared: false,
+                          onPressed: () {
+                            setState(() {
+                              _selectedType = ScheduleType.personal;
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        ScheduleTypeButton(
+                          label: '우리',
+                          isSelected: _selectedType == ScheduleType.couple,
+                          isShared: true,
+                          onPressed: () {
+                            setState(() {
+                              _selectedType = ScheduleType.couple;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -22,7 +22,14 @@ class ScheduleRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Text(title, style: textTheme.bodyMedium),
+          Expanded(
+            child: Text(
+              title,
+              style: textTheme.bodyMedium,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );
