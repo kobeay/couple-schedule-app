@@ -316,8 +316,9 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const ScheduleFormPage(
+                                                  ScheduleFormPage(
                                                     isEditing: true,
+                                                    scheduleId: schedule.id,
                                                   ),
                                             ),
                                           );
