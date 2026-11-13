@@ -1,5 +1,6 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/auth/presentation/providers/user_info_provider.dart';
+import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_response.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/pages/schedule_form_page.dart';
@@ -66,6 +67,27 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
     return '${startTime.substring(0, 5)} ~ ${endTime.substring(0, 5)}';
   }
 
+  bool matchesScheduleFilter(
+    ScheduleListResponse schedule,
+    int? currentUserId,
+  ) {
+    switch (_selectedFilter) {
+      case ScheduleFilterType.all:
+        return true;
+
+      case ScheduleFilterType.me:
+        return schedule.type == ScheduleType.personal &&
+            schedule.userId == currentUserId;
+
+      case ScheduleFilterType.partner:
+        return schedule.type == ScheduleType.personal &&
+            schedule.userId != currentUserId;
+
+      case ScheduleFilterType.couple:
+        return schedule.type == ScheduleType.couple;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -79,27 +101,15 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
 
     final currentUserId = ref.watch(userInfoProvider).value?.id;
 
-    final calendarSchedules = (monthlySchedules.value ?? []).where((schedule) {
-      if (_selectedFilter == ScheduleFilterType.all) {
-        return true;
-      }
+    final couple = ref.watch(coupleProvider);
 
-      if (_selectedFilter == ScheduleFilterType.me) {
-        return schedule.type == ScheduleType.personal &&
-            schedule.userId == currentUserId;
-      }
+    final isConnectedCouple = couple.value?.connected == true;
 
-      if (_selectedFilter == ScheduleFilterType.partner) {
-        return schedule.type == ScheduleType.personal &&
-            schedule.userId != currentUserId;
-      }
+    final partnerNickname = couple.value?.partnerNickname ?? '상대방';
 
-      if (_selectedFilter == ScheduleFilterType.couple) {
-        return schedule.type == ScheduleType.couple;
-      }
-
-      return false;
-    }).toList();
+    final calendarSchedules = (monthlySchedules.value ?? [])
+        .where((schedule) => matchesScheduleFilter(schedule, currentUserId))
+        .toList();
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -107,12 +117,20 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         shape: const CircleBorder(),
-        onPressed: () => Navigator.of(context).push<void>(
-          MaterialPageRoute(
-            builder: (context) => ScheduleFormPage(),
-            fullscreenDialog: true,
-          ),
-        ),
+        onPressed: () async {
+          final result = await Navigator.of(context).push<bool>(
+            MaterialPageRoute(
+              builder: (context) => ScheduleFormPage(),
+              fullscreenDialog: true,
+            ),
+          );
+
+          if (!context.mounted) return;
+
+          if (result == true) {
+            ref.invalidate(monthlySchedulesProvider);
+          }
+        },
         child: const Icon(Icons.add_rounded, size: 30),
       ),
       body: SafeArea(
@@ -148,56 +166,57 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
 
                 const SizedBox(height: 2),
 
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ScheduleFilter(
-                      label: '전체',
-                      backgroundColor: AppColors.textPrimary,
-                      foregroundColor: AppColors.surface,
-                      selected: _selectedFilter == ScheduleFilterType.all,
-                      onPressed: () {
-                        setState(() {
-                          _selectedFilter = ScheduleFilterType.all;
-                        });
-                      },
-                    ),
-                    ScheduleFilter(
-                      label: '나',
-                      backgroundColor: AppColors.myScheduleContainer,
-                      foregroundColor: AppColors.onMySchedule,
-                      selected: _selectedFilter == ScheduleFilterType.me,
-                      onPressed: () {
-                        setState(() {
-                          _selectedFilter = ScheduleFilterType.me;
-                        });
-                      },
-                    ),
-                    ScheduleFilter(
-                      label: '여자친구',
-                      backgroundColor: AppColors.partnerScheduleContainer,
-                      foregroundColor: AppColors.onPartnerSchedule,
-                      selected: _selectedFilter == ScheduleFilterType.partner,
-                      onPressed: () {
-                        setState(() {
-                          _selectedFilter = ScheduleFilterType.partner;
-                        });
-                      },
-                    ),
-                    ScheduleFilter(
-                      label: '우리',
-                      backgroundColor: AppColors.sharedScheduleContainer,
-                      foregroundColor: AppColors.onSharedSchedule,
-                      selected: _selectedFilter == ScheduleFilterType.couple,
-                      onPressed: () {
-                        setState(() {
-                          _selectedFilter = ScheduleFilterType.couple;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                if (isConnectedCouple)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      ScheduleFilter(
+                        label: '전체',
+                        backgroundColor: AppColors.textPrimary,
+                        foregroundColor: AppColors.surface,
+                        selected: _selectedFilter == ScheduleFilterType.all,
+                        onPressed: () {
+                          setState(() {
+                            _selectedFilter = ScheduleFilterType.all;
+                          });
+                        },
+                      ),
+                      ScheduleFilter(
+                        label: '나',
+                        backgroundColor: AppColors.myScheduleContainer,
+                        foregroundColor: AppColors.onMySchedule,
+                        selected: _selectedFilter == ScheduleFilterType.me,
+                        onPressed: () {
+                          setState(() {
+                            _selectedFilter = ScheduleFilterType.me;
+                          });
+                        },
+                      ),
+                      ScheduleFilter(
+                        label: partnerNickname,
+                        backgroundColor: AppColors.partnerScheduleContainer,
+                        foregroundColor: AppColors.onPartnerSchedule,
+                        selected: _selectedFilter == ScheduleFilterType.partner,
+                        onPressed: () {
+                          setState(() {
+                            _selectedFilter = ScheduleFilterType.partner;
+                          });
+                        },
+                      ),
+                      ScheduleFilter(
+                        label: '우리',
+                        backgroundColor: AppColors.sharedScheduleContainer,
+                        foregroundColor: AppColors.onSharedSchedule,
+                        selected: _selectedFilter == ScheduleFilterType.couple,
+                        onPressed: () {
+                          setState(() {
+                            _selectedFilter = ScheduleFilterType.couple;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
 
                 //const SizedBox(height: 16),
                 MonthCalendar(
@@ -238,31 +257,30 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    final selectedSchedules = schedules.where((schedule) {
-                      if (!DateUtils.isSameDay(schedule.date, _selectedDay)) {
-                        return false;
-                      }
+                    final selectedSchedules =
+                        schedules
+                            .where(
+                              (schedule) =>
+                                  DateUtils.isSameDay(
+                                    schedule.date,
+                                    _selectedDay,
+                                  ) &&
+                                  matchesScheduleFilter(
+                                    schedule,
+                                    currentUserId,
+                                  ),
+                            )
+                            .toList()
+                          ..sort((a, b) {
+                            final aTime = a.startTime;
+                            final bTime = b.startTime;
 
-                      if (_selectedFilter == ScheduleFilterType.all) {
-                        return true;
-                      }
+                            if (aTime == null && bTime == null) return 0;
+                            if (aTime == null) return 1;
+                            if (bTime == null) return -1;
 
-                      if (_selectedFilter == ScheduleFilterType.me) {
-                        return schedule.type == ScheduleType.personal &&
-                            schedule.userId == currentUserId;
-                      }
-
-                      if (_selectedFilter == ScheduleFilterType.partner) {
-                        return schedule.type == ScheduleType.personal &&
-                            schedule.userId != currentUserId;
-                      }
-
-                      if (_selectedFilter == ScheduleFilterType.couple) {
-                        return schedule.type == ScheduleType.couple;
-                      }
-
-                      return false;
-                    });
+                            return aTime.compareTo(bTime);
+                          });
 
                     if (selectedSchedules.isEmpty) {
                       return const Column(
@@ -278,26 +296,32 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ...selectedSchedules.map((schedule) {
+                            final owner = getScheduleOwner(
+                              schedule,
+                              currentUserId,
+                            );
+
                             return Column(
                               children: [
                                 ScheduleCard(
                                   title: schedule.title,
                                   time: formatScheduleTime(schedule),
-                                  owner: getScheduleOwner(
-                                    schedule,
-                                    currentUserId,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ScheduleFormPage(
-                                              isEditing: true,
+                                  owner: owner,
+                                  partnerNickname: partnerNickname,
+                                  isConnectedCouple: isConnectedCouple,
+                                  onTap: owner == ScheduleOwner.partner
+                                      ? null
+                                      : () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ScheduleFormPage(
+                                                    isEditing: true,
+                                                  ),
                                             ),
-                                      ),
-                                    );
-                                  },
+                                          );
+                                        },
                                 ),
                                 const Divider(
                                   height: 1,

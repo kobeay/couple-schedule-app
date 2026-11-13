@@ -7,6 +7,8 @@ class ScheduleCard extends StatelessWidget {
   final String title;
   final String time;
   final ScheduleOwner owner;
+  final String partnerNickname;
+  final bool isConnectedCouple;
   final VoidCallback? onTap;
 
   const ScheduleCard({
@@ -14,6 +16,8 @@ class ScheduleCard extends StatelessWidget {
     required this.title,
     required this.time,
     required this.owner,
+    required this.partnerNickname,
+    required this.isConnectedCouple,
     this.onTap,
   });
 
@@ -57,31 +61,36 @@ class ScheduleCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: switch (owner) {
-                  ScheduleOwner.me => AppColors.myScheduleContainer,
-                  ScheduleOwner.partner => AppColors.partnerScheduleContainer,
-                  ScheduleOwner.couple => AppColors.sharedScheduleContainer,
-                },
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(
-                switch (owner) {
-                  ScheduleOwner.me => '나',
-                  ScheduleOwner.partner => '여자친구',
-                  ScheduleOwner.couple => '우리',
-                },
-                style: textTheme.labelSmall?.copyWith(
+            if (isConnectedCouple) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
                   color: switch (owner) {
-                    ScheduleOwner.me => AppColors.onMySchedule,
-                    ScheduleOwner.partner => AppColors.onPartnerSchedule,
-                    ScheduleOwner.couple => AppColors.onSharedSchedule,
+                    ScheduleOwner.me => AppColors.myScheduleContainer,
+                    ScheduleOwner.partner => AppColors.partnerScheduleContainer,
+                    ScheduleOwner.couple => AppColors.sharedScheduleContainer,
                   },
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Text(
+                  switch (owner) {
+                    ScheduleOwner.me => '나',
+                    ScheduleOwner.partner => partnerNickname,
+                    ScheduleOwner.couple => '우리',
+                  },
+                  style: textTheme.labelSmall?.copyWith(
+                    color: switch (owner) {
+                      ScheduleOwner.me => AppColors.onMySchedule,
+                      ScheduleOwner.partner => AppColors.onPartnerSchedule,
+                      ScheduleOwner.couple => AppColors.onSharedSchedule,
+                    },
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),
