@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_update_request.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/providers/monthly_schedules_provider.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_repository_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,8 @@ class ScheduleUpdateNotifier extends AsyncNotifier<void> {
       } else {
         debugPrint('일정 수정 실패: $error');
       }
+    } else {
+      ref.invalidate(monthlySchedulesProvider);
     }
   }
 }

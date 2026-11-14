@@ -1,6 +1,7 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_create_request.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_response.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_update_request.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_create_notifier.dart';
@@ -15,7 +16,14 @@ class ScheduleFormPage extends ConsumerStatefulWidget {
 
   final int? scheduleId;
 
-  const ScheduleFormPage({super.key, this.isEditing = false, this.scheduleId});
+  final ScheduleListResponse? schedule;
+
+  const ScheduleFormPage({
+    super.key,
+    this.isEditing = false,
+    this.scheduleId,
+    this.schedule,
+  });
 
   @override
   ConsumerState<ScheduleFormPage> createState() => _ScheduleFormPageState();
@@ -35,6 +43,37 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
   TimeOfDay? _endTime;
 
   ScheduleType _selectedType = ScheduleType.personal;
+
+  TimeOfDay? _parseTime(String? time) {
+    if (time == null) return null;
+
+    final parts = time.split(':');
+
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    final schedule = widget.schedule;
+
+    if (schedule != null) {
+      _titleController.text = schedule.title;
+
+      _selectedDate = schedule.date;
+
+      _startTime = _parseTime(schedule.startTime);
+
+      _endTime = _parseTime(schedule.endTime);
+
+      _isTimeUndecided = _startTime == null;
+
+      _memoController.text = schedule.memo ?? '';
+
+      _selectedType = schedule.type;
+    }
+  }
 
   @override
   void dispose() {

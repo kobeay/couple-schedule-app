@@ -7,6 +7,7 @@ class ScheduleListResponse {
   final DateTime date;
   final String? startTime;
   final String? endTime;
+  final String? memo;
   final ScheduleType type;
 
   const ScheduleListResponse({
@@ -16,6 +17,7 @@ class ScheduleListResponse {
     required this.date,
     this.startTime,
     this.endTime,
+    this.memo,
     required this.type,
   });
 
@@ -27,6 +29,7 @@ class ScheduleListResponse {
       date: DateTime.parse(json['date'] as String),
       startTime: json['startTime'] as String?,
       endTime: json['endTime'] as String?,
+      memo: json['memo'] as String?,
       type: ScheduleType.values.byName((json['type'] as String).toLowerCase()),
     );
   }
