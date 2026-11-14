@@ -20,4 +20,8 @@ class ScheduleRepository {
   Future<void> updateSchedule(ScheduleUpdateRequest request, int scheduleId) {
     return _scheduleApi.updateSchedule(request, scheduleId);
   }
+
+  Future<void> deleteSchedule(int scheduleId) {
+    return _scheduleApi.deleteSchedule(scheduleId);
+  }
 }

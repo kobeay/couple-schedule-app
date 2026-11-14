@@ -35,4 +35,8 @@ class ScheduleApi {
   ) async {
     await _dio.put('/api/schedules/$scheduleId', data: request.toJson());
   }
+
+  Future<void> deleteSchedule(int scheduleId) async {
+    await _dio.delete('/api/schedules/$scheduleId');
+  }
 }
