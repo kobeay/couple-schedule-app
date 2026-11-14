@@ -5,6 +5,7 @@ import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_update_request.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_create_notifier.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_delete_notifier.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_update_notifier.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/picker_field.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/schedule_type_button.dart';
@@ -105,6 +106,8 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
 
     final updateState = ref.watch(scheduleUpdateNotifier);
 
+    final deleteState = ref.watch(scheduleDeleteNotifier);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -117,7 +120,10 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
         ),
         actions: [
           TextButton(
-            onPressed: createState.isLoading || updateState.isLoading
+            onPressed:
+                createState.isLoading ||
+                    updateState.isLoading ||
+                    deleteState.isLoading
                 ? null
                 : () async {
                     if (!_formKey.currentState!.validate()) {
@@ -438,6 +444,83 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                           },
                         ),
                       ],
+                    ),
+                  ],
+
+                  const SizedBox(height: 35),
+
+                  if (widget.isEditing) ...[
+                    OutlinedButton(
+                      onPressed: deleteState.isLoading
+                          ? null
+                          : () async {
+                              final confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (dialogContext) => AlertDialog(
+                                  title: Text('일정을 삭제할까요?'),
+                                  content: Text(
+                                    '삭제한 일정은 되돌릴 수 없어요',
+                                    style: textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.textSecondary,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(dialogContext, false),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor:
+                                            AppColors.textSecondary,
+                                      ),
+                                      child: const Text('취소'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(dialogContext, true),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: AppColors.destructive,
+                                      ),
+                                      child: const Text('삭제'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirmed != true || !mounted) return;
+
+                              await ref
+                                  .read(scheduleDeleteNotifier.notifier)
+                                  .deleteSchedule(widget.schedule!.id);
+
+                              if (!context.mounted) return;
+
+                              final result = ref.read(scheduleDeleteNotifier);
+
+                              if (result.hasError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('일정을 삭제하지 못했어요'),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('일정을 삭제했어요')),
+                              );
+
+                              Navigator.pop(context, true);
+                            },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColors.background,
+                        foregroundColor: AppColors.destructive,
+                        side: const BorderSide(
+                          color: AppColors.destructiveOutline,
+                        ),
+                        minimumSize: const Size.fromHeight(50),
+                      ),
+                      child: const Text('일정 삭제'),
                     ),
                   ],
                 ],
