@@ -1,6 +1,7 @@
 import 'package:couple_schedule_app/core/network/dio_client.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_create_request.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_response.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/schedule_update_request.dart';
 import 'package:dio/dio.dart';
 
 class ScheduleApi {
@@ -26,5 +27,12 @@ class ScheduleApi {
           (json) => ScheduleListResponse.fromJson(json as Map<String, dynamic>),
         )
         .toList();
+  }
+
+  Future<void> updateSchedule(
+    ScheduleUpdateRequest request,
+    int scheduleId,
+  ) async {
+    await _dio.put('/api/schedules/$scheduleId', data: request.toJson());
   }
 }

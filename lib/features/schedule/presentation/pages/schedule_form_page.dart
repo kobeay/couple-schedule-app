@@ -1,8 +1,11 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_create_request.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_response.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/schedule_update_request.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_create_notifier.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_update_notifier.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/picker_field.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/widgets/schedule_type_button.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +14,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ScheduleFormPage extends ConsumerStatefulWidget {
   final bool isEditing;
 
-  const ScheduleFormPage({super.key, this.isEditing = false});
+  final int? scheduleId;
+
+  final ScheduleListResponse? schedule;
+
+  const ScheduleFormPage({
+    super.key,
+    this.isEditing = false,
+    this.scheduleId,
+    this.schedule,
+  });
 
   @override
   ConsumerState<ScheduleFormPage> createState() => _ScheduleFormPageState();
@@ -31,6 +43,37 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
   TimeOfDay? _endTime;
 
   ScheduleType _selectedType = ScheduleType.personal;
+
+  TimeOfDay? _parseTime(String? time) {
+    if (time == null) return null;
+
+    final parts = time.split(':');
+
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    final schedule = widget.schedule;
+
+    if (schedule != null) {
+      _titleController.text = schedule.title;
+
+      _selectedDate = schedule.date;
+
+      _startTime = _parseTime(schedule.startTime);
+
+      _endTime = _parseTime(schedule.endTime);
+
+      _isTimeUndecided = _startTime == null;
+
+      _memoController.text = schedule.memo ?? '';
+
+      _selectedType = schedule.type;
+    }
+  }
 
   @override
   void dispose() {
@@ -60,6 +103,8 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
 
     final isConnectedCouple = couple.value?.connected == true;
 
+    final updateState = ref.watch(scheduleUpdateNotifier);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -72,7 +117,7 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
         ),
         actions: [
           TextButton(
-            onPressed: createState.isLoading
+            onPressed: createState.isLoading || updateState.isLoading
                 ? null
                 : () async {
                     if (!_formKey.currentState!.validate()) {
@@ -94,7 +139,7 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                       }
                     }
 
-                    final request = ScheduleCreateRequest(
+                    final createRequest = ScheduleCreateRequest(
                       title: _titleController.text.trim(),
                       date: _selectedDate,
                       startTime: _formatTime(_startTime),
@@ -105,24 +150,54 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                           : ScheduleType.personal,
                     );
 
-                    await ref
-                        .read(scheduleCreateNotifier.notifier)
-                        .createSchedule(request);
+                    final updateRequest = ScheduleUpdateRequest(
+                      title: _titleController.text.trim(),
+                      date: _selectedDate,
+                      startTime: _formatTime(_startTime),
+                      endTime: _formatTime(_endTime),
+                      memo: _memoController.text.trim(),
+                      type: isConnectedCouple
+                          ? _selectedType
+                          : ScheduleType.personal,
+                    );
+
+                    if (widget.isEditing) {
+                      await ref
+                          .read(scheduleUpdateNotifier.notifier)
+                          .updateSchedule(updateRequest, widget.scheduleId!);
+                    } else {
+                      await ref
+                          .read(scheduleCreateNotifier.notifier)
+                          .createSchedule(createRequest);
+                    }
 
                     if (!context.mounted) return;
 
-                    final result = ref.read(scheduleCreateNotifier);
+                    final result = widget.isEditing
+                        ? ref.read(scheduleUpdateNotifier)
+                        : ref.read(scheduleCreateNotifier);
 
                     if (result.hasError) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('일정을 추가하지 못했어요')),
+                        SnackBar(
+                          content: Text(
+                            widget.isEditing
+                                ? '일정을 수정하지 못했어요'
+                                : '알정울 추가하지 못했어요',
+                          ),
+                        ),
                       );
+
                       return;
                     }
 
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('일정을 추가했어요')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          widget.isEditing ? '일정을 수정했어요' : '일정을 추가했어요',
+                        ),
+                      ),
+                    );
 
                     Navigator.pop(context, true);
                   },

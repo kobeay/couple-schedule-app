@@ -117,19 +117,13 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         shape: const CircleBorder(),
-        onPressed: () async {
-          final result = await Navigator.of(context).push<bool>(
+        onPressed: () {
+          Navigator.of(context).push<bool>(
             MaterialPageRoute(
               builder: (context) => ScheduleFormPage(),
               fullscreenDialog: true,
             ),
           );
-
-          if (!context.mounted) return;
-
-          if (result == true) {
-            ref.invalidate(monthlySchedulesProvider);
-          }
         },
         child: const Icon(Icons.add_rounded, size: 30),
       ),
@@ -316,8 +310,10 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const ScheduleFormPage(
+                                                  ScheduleFormPage(
                                                     isEditing: true,
+                                                    scheduleId: schedule.id,
+                                                    schedule: schedule,
                                                   ),
                                             ),
                                           );
