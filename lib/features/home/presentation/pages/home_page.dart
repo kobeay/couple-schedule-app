@@ -68,6 +68,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     final currentUserId = ref.watch(userInfoProvider).value?.id;
 
+    final todayScheduleCount = monthlySchedules.value?.where((schedule) {
+      return DateUtils.isSameDay(schedule.date, _today);
+    }).length;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -76,76 +80,79 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (isConnectedCouple)
-                  Card(
-                    margin: EdgeInsets.zero,
-                    color: theme.colorScheme.primaryContainer,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: const BorderSide(
-                        color: AppColors.primaryContainerOutline,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsetsGeometry.all(24),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '우리 함께한 지',
-                                  style: textTheme.bodyLarge?.copyWith(
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Text(
-                                      '❤️',
-                                      style: TextStyle(fontSize: 24),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      '365일',
-                                      style: textTheme.displayLarge?.copyWith(
-                                        color: theme.colorScheme.primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  '2025.09.05 ~ ',
-                                  style: textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(width: 8),
-
-                          const SizedBox(
-                            width: 90,
-                            height: 104,
-                            child: FittedBox(
-                              fit: BoxFit.contain,
-                              alignment: Alignment.bottomCenter,
-                              child: SizedBox(
-                                width: 120,
-                                height: 100,
-                                child: CoupleAnimation(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                Card(
+                  margin: EdgeInsets.zero,
+                  color: theme.colorScheme.primaryContainer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: const BorderSide(
+                      color: AppColors.primaryContainerOutline,
                     ),
                   ),
+                  child: Padding(
+                    padding: const EdgeInsetsGeometry.all(24),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                isConnectedCouple ? '우리 함께한 지' : '오늘의 일정',
+                                style: textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text(
+                                    isConnectedCouple
+                                        ? '365일'
+                                        : '$todayScheduleCount개',
+                                    style: textTheme.displayLarge?.copyWith(
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    isConnectedCouple ? '❤️' : '🌱',
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                isConnectedCouple
+                                    ? '2025.09.05 ~ '
+                                    : '오늘도 좋은 하루 보내세요!',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        const SizedBox(
+                          width: 90,
+                          height: 104,
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            alignment: Alignment.bottomCenter,
+                            child: SizedBox(
+                              width: 120,
+                              height: 100,
+                              child: CoupleAnimation(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
 
                 const SizedBox(height: 16),
 
