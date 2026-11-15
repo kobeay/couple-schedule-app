@@ -109,7 +109,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   Text(
                                     isConnectedCouple
                                         ? '365일'
-                                        : '${todayScheduleCount}개',
+                                        : '$todayScheduleCount개',
                                     style: textTheme.displayLarge?.copyWith(
                                       color: theme.colorScheme.primary,
                                     ),
