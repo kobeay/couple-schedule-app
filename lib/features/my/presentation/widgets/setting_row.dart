@@ -6,8 +6,15 @@ class SettingRow extends StatelessWidget {
   final String title;
   final String? value;
   final VoidCallback? onTap;
+  final bool? isConnectedCouple;
 
-  const SettingRow({super.key, required this.title, this.value, this.onTap});
+  const SettingRow({
+    super.key,
+    required this.title,
+    this.value,
+    this.onTap,
+    this.isConnectedCouple,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +26,24 @@ class SettingRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
         child: Row(
           children: [
-            Expanded(child: Text(title, style: textTheme.bodyLarge)),
+            Expanded(
+              child: Text(
+                title,
+                style: isConnectedCouple == false
+                    ? textTheme.bodyLarge?.copyWith(
+                        color: AppColors.textDisabled,
+                      )
+                    : textTheme.bodyLarge,
+              ),
+            ),
             if (value != null) ...[
               const SizedBox(width: 12),
               Text(
                 value!,
                 style: textTheme.bodySmall?.copyWith(
-                  color: AppColors.textTertiary,
+                  color: isConnectedCouple == false
+                      ? AppColors.textDisabled
+                      : AppColors.textTertiary,
                 ),
               ),
             ],

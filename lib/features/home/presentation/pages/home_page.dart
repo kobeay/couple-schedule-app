@@ -57,20 +57,40 @@ class _HomePageState extends ConsumerState<HomePage> {
     final textTheme = theme.textTheme;
 
     final couple = ref.watch(coupleProvider);
-
     final isConnectedCouple = couple.value?.connected == true;
-
     final partnerNickname = couple.value?.partnerNickname ?? '상대방';
+
+    final metDate = couple.value?.metDate;
+    final metDateText = !isConnectedCouple || metDate == null
+        ? null
+        : '${metDate.year}-${metDate.month.toString().padLeft(2, '0')}-${metDate.day.toString().padLeft(2, '0')}';
 
     final monthlySchedules = ref.watch(
       monthlySchedulesProvider((year: _today.year, month: _today.month)),
     );
 
-    final currentUserId = ref.watch(userInfoProvider).value?.id;
+    final user = ref.watch(userInfoProvider);
+    final currentUserId = user.value?.id;
 
     final todayScheduleCount = monthlySchedules.value?.where((schedule) {
       return DateUtils.isSameDay(schedule.date, _today);
     }).length;
+
+    final days = metDate == null
+        ? null
+        : DateTime.utc(_today.year, _today.month, _today.day)
+                  .difference(
+                    DateTime.utc(metDate.year, metDate.month, metDate.day),
+                  )
+                  .inDays +
+              1;
+
+    final isHomeLoading =
+        couple.isLoading || monthlySchedules.isLoading || user.isLoading;
+
+    if (isHomeLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -108,7 +128,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 children: [
                                   Text(
                                     isConnectedCouple
-                                        ? '365일'
+                                        ? days == null
+                                              ? '날짜 미설정'
+                                              : '$days일'
                                         : '$todayScheduleCount개',
                                     style: textTheme.displayLarge?.copyWith(
                                       color: theme.colorScheme.primary,
@@ -124,7 +146,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                               const SizedBox(height: 10),
                               Text(
                                 isConnectedCouple
-                                    ? '2025.09.05 ~ '
+                                    ? metDate == null
+                                          ? '만난 날짜를 설정해 주세요'
+                                          : '$metDateText ~ '
                                     : '오늘도 좋은 하루 보내세요!',
                                 style: textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.primary,
