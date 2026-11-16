@@ -1,6 +1,7 @@
 import 'package:couple_schedule_app/features/couple/data/datasources/couple_api.dart';
 import 'package:couple_schedule_app/features/couple/data/models/couple_invitation_request.dart';
 import 'package:couple_schedule_app/features/couple/data/models/couple_invitation_response.dart';
+import 'package:couple_schedule_app/features/couple/data/models/couple_met_date_update_request.dart';
 import 'package:couple_schedule_app/features/couple/data/models/couple_response.dart';
 
 class CoupleRepository {
@@ -31,5 +32,9 @@ class CoupleRepository {
 
   Future<void> disconnectCouple() {
     return _coupleApi.disconnectCouple();
+  }
+
+  Future<void> updateMetDate(CoupleMetDateUpdateRequest request) {
+    return _coupleApi.updateMetDate(request);
   }
 }

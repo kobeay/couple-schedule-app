@@ -1,6 +1,7 @@
 import 'package:couple_schedule_app/core/network/dio_client.dart';
 import 'package:couple_schedule_app/features/couple/data/models/couple_invitation_request.dart';
 import 'package:couple_schedule_app/features/couple/data/models/couple_invitation_response.dart';
+import 'package:couple_schedule_app/features/couple/data/models/couple_met_date_update_request.dart';
 import 'package:couple_schedule_app/features/couple/data/models/couple_response.dart';
 import 'package:dio/dio.dart';
 
@@ -42,5 +43,9 @@ class CoupleApi {
 
   Future<void> disconnectCouple() async {
     await _dio.delete('/api/couples/me');
+  }
+
+  Future<void> updateMetDate(CoupleMetDateUpdateRequest request) async {
+    await _dio.patch('/api/couples/me/met-date', data: request.toJson());
   }
 }

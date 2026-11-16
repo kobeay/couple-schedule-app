@@ -20,12 +20,14 @@ void main() {
     connected: false,
     partnerNickname: null,
     connectedAt: null,
+    metDate: null,
   );
 
   final connectedCouple = CoupleResponse(
     connected: true,
     partnerNickname: '민수',
     connectedAt: DateTime(2025, 3, 7),
+    metDate: DateTime(2025, 4, 19),
   );
 
   Future<void> pumpPage(WidgetTester tester, CoupleResponse couple) async {
