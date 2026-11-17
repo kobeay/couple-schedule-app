@@ -2,9 +2,12 @@ import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_request.dart';
 import 'package:couple_schedule_app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:couple_schedule_app/features/auth/presentation/providers/login_notifier.dart';
+import 'package:couple_schedule_app/features/auth/presentation/providers/user_info_provider.dart';
 import 'package:couple_schedule_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:couple_schedule_app/app/widgets/couple_animation.dart';
+import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/main/presentation/pages/main_page.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/providers/monthly_schedules_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,6 +49,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (previous?.isLoading == true &&
           next is AsyncData &&
           next.value != null) {
+        ref.invalidate(userInfoProvider);
+        ref.invalidate(coupleProvider);
+        ref.invalidate(monthlySchedulesProvider);
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainPage()),

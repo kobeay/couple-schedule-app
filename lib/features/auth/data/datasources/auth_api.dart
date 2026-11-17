@@ -1,6 +1,7 @@
 import 'package:couple_schedule_app/core/network/dio_client.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_request.dart';
 import 'package:couple_schedule_app/features/auth/data/models/login_response.dart';
+import 'package:couple_schedule_app/features/auth/data/models/refresh_request.dart';
 import 'package:couple_schedule_app/features/auth/data/models/sign_up_request.dart';
 import 'package:couple_schedule_app/features/auth/data/models/user_response.dart';
 import 'package:dio/dio.dart';
@@ -40,5 +41,9 @@ class AuthApi {
     );
 
     return LoginResponse.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<void> logout(RefreshRequest request) async {
+    await _dio.post('/api/users/logout', data: request.toJson());
   }
 }
