@@ -3,6 +3,7 @@ import 'package:couple_schedule_app/features/auth/presentation/providers/user_in
 import 'package:couple_schedule_app/features/couple/presentation/pages/couple_management_page.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/my/presentation/pages/met_date_page.dart';
+import 'package:couple_schedule_app/features/my/presentation/pages/profile_edit_page.dart';
 import 'package:couple_schedule_app/features/my/presentation/widgets/profile_avatar.dart';
 import 'package:couple_schedule_app/features/my/presentation/widgets/setting_row.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class _MyPageState extends ConsumerState<MyPage> {
 
     final user = ref.watch(userInfoProvider);
     final nickname = user.value?.nickname ?? '나';
+    final email = user.value?.email ?? '';
 
     return Scaffold(
       body: SafeArea(
@@ -91,7 +93,20 @@ class _MyPageState extends ConsumerState<MyPage> {
                   margin: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      SettingRow(title: '내 프로필', value: nickname),
+                      SettingRow(
+                        title: '내 프로필',
+                        value: nickname,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileEditPage(
+                                nickname: nickname,
+                                email: email,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       Divider(height: 1, thickness: 1),
                       SettingRow(
                         title: '우리가 만난 날짜',
