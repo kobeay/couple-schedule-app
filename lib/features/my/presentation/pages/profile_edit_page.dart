@@ -144,7 +144,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         .read(nicknameUpdateNotifier.notifier)
                         .updateNickname(request);
 
-                    if (!mounted) return;
+                    if (!context.mounted) return;
 
                     final result = ref.read(nicknameUpdateNotifier);
 
