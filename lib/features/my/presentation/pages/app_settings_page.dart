@@ -1,6 +1,7 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/auth/presentation/pages/login_page.dart';
 import 'package:couple_schedule_app/features/auth/presentation/providers/logout_notifier.dart';
+import 'package:couple_schedule_app/features/my/presentation/providers/delete_user_notifier.dart';
 import 'package:couple_schedule_app/features/my/presentation/widgets/setting_row.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,11 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
     final textTheme = Theme.of(context).textTheme;
 
     final logoutState = ref.watch(logoutNotifier);
+
+    final deleteUserState = ref.watch(deleteUserNotifier);
+
+    final isAccountProcessing =
+        logoutState.isLoading || deleteUserState.isLoading;
 
     return Scaffold(
       appBar: AppBar(
@@ -45,13 +51,13 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                     children: [
                       SettingRow(
                         title: '로그아웃',
-                        onTap: logoutState.isLoading
+                        onTap: isAccountProcessing
                             ? null
                             : () async {
                                 final confirmed = await showDialog<bool>(
                                   context: context,
                                   builder: (dialogContext) => AlertDialog(
-                                    title: Text('로그아웃을 진행할까요?'),
+                                    title: const Text('로그아웃을 진행할까요?'),
                                     content: Text(
                                       '현재 계정에서 로그아웃하고\n로그인 화면으로 이동해요',
                                       style: textTheme.bodyMedium?.copyWith(
@@ -112,7 +118,72 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                               },
                       ),
                       Divider(height: 1, thickness: 1),
-                      SettingRow(title: '회원탈퇴'),
+                      SettingRow(
+                        title: '회원탈퇴',
+                        onTap: isAccountProcessing
+                            ? null
+                            : () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (dialogContext) => AlertDialog(
+                                    title: const Text('정말 탈퇴하시겠어요?'),
+                                    content: Text(
+                                      '탈퇴하면 계정과 개인 일정, 함께 등록한 모든 일정이 삭제돼요.\n삭제된 정보는 복구할 수 없어요.',
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        color: AppColors.textSecondary,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(dialogContext, false),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              AppColors.textSecondary,
+                                        ),
+                                        child: const Text('취소'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(dialogContext, true),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              AppColors.destructive,
+                                        ),
+                                        child: const Text('회원탈퇴'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirmed != true || !mounted) return;
+
+                                await ref
+                                    .read(deleteUserNotifier.notifier)
+                                    .deleteUser();
+
+                                if (!context.mounted) return;
+
+                                final result = ref.read(deleteUserNotifier);
+
+                                if (result.hasError) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('회원탈퇴 실패했어요')),
+                                  );
+
+                                  return;
+                                }
+
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginPage(),
+                                  ),
+                                  (route) => false,
+                                );
+                              },
+                      ),
                     ],
                   ),
                 ),
