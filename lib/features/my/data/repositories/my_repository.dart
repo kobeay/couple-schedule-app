@@ -9,4 +9,8 @@ class MyRepository {
   Future<void> updateNickname(UserNicknameUpdateRequest request) {
     return _myApi.updateNickname(request);
   }
+
+  Future<void> deleteUser() {
+    return _myApi.deleteUser();
+  }
 }

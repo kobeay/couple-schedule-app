@@ -10,4 +10,8 @@ class MyApi {
   Future<void> updateNickname(UserNicknameUpdateRequest request) async {
     await _dio.patch('/api/users/me/nickname', data: request.toJson());
   }
+
+  Future<void> deleteUser() async {
+    await _dio.delete('/api/users/me');
+  }
 }
