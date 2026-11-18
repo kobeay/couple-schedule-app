@@ -117,13 +117,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                isConnectedCouple ? '우리 함께한 지' : '오늘의 일정',
-                                style: textTheme.bodyLarge?.copyWith(
-                                  color: theme.colorScheme.primary,
+                              if (!isConnectedCouple || days != null) ...[
+                                Text(
+                                  isConnectedCouple ? '우리 함께한 지' : '오늘의 일정',
+                                  style: textTheme.bodyLarge?.copyWith(
+                                    color: theme.colorScheme.primary,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 10),
+                                const SizedBox(height: 10),
+                              ],
                               Row(
                                 children: [
                                   Text(
@@ -136,11 +138,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                                       color: theme.colorScheme.primary,
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    isConnectedCouple ? '❤️' : '🌱',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
+                                  if (!isConnectedCouple || days != null) ...[
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      isConnectedCouple ? '❤️' : '🌱',
+                                      style: TextStyle(fontSize: 24),
+                                    ),
+                                  ],
                                 ],
                               ),
                               const SizedBox(height: 10),
