@@ -20,6 +20,18 @@ class CoupleManagementPage extends ConsumerStatefulWidget {
 
 class _CoupleManagementPageState extends ConsumerState<CoupleManagementPage> {
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      if (!mounted) return;
+
+      ref.invalidate(receivedInvitaionsProvider);
+      ref.invalidate(coupleProvider);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 

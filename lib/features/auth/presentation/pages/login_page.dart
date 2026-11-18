@@ -6,6 +6,7 @@ import 'package:couple_schedule_app/features/auth/presentation/providers/user_in
 import 'package:couple_schedule_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:couple_schedule_app/app/widgets/couple_animation.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
+import 'package:couple_schedule_app/features/couple/presentation/providers/received_invitations_provider.dart';
 import 'package:couple_schedule_app/features/main/presentation/pages/main_page.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/monthly_schedules_provider.dart';
 import 'package:dio/dio.dart';
@@ -52,6 +53,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ref.invalidate(userInfoProvider);
         ref.invalidate(coupleProvider);
         ref.invalidate(monthlySchedulesProvider);
+        ref.invalidate(receivedInvitaionsProvider);
 
         Navigator.pushReplacement(
           context,

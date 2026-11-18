@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_repository_provider.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/providers/monthly_schedules_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,6 +36,7 @@ class CoupleDisconnectionNotifier extends AsyncNotifier<void> {
       }
     } else {
       ref.invalidate(coupleProvider);
+      ref.invalidate(monthlySchedulesProvider);
     }
   }
 }
