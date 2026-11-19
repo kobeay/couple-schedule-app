@@ -283,6 +283,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                           if (!context.mounted) return;
 
+                          _emailController.clear();
+                          _passwordController.clear();
+
                           if (result == true) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
