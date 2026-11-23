@@ -1,9 +1,11 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/repeat_type.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_create_request.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_response.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_update_request.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/pages/repeat_setting_page.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_create_notifier.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_delete_notifier.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_update_notifier.dart';
@@ -44,6 +46,9 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
   TimeOfDay? _endTime;
 
   ScheduleType _selectedType = ScheduleType.personal;
+
+  RepeatType _selectedRepeatType = RepeatType.none;
+  DateTime? _repeatEndDate;
 
   TimeOfDay? _parseTime(String? time) {
     if (time == null) return null;
@@ -90,6 +95,55 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
     final minute = time.minute.toString().padLeft(2, '0');
 
     return '$hour:$minute:00';
+  }
+
+  Future<void> _showRepeatTypePicker() async {
+    final selectedType = await showModalBottomSheet<RepeatType>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '반복 설정',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+
+              const SizedBox(height: 16),
+
+              ...RepeatType.values.map((type) {
+                return ListTile(
+                  title: Text(type.label),
+                  trailing: _selectedRepeatType == type
+                      ? Icon(
+                          Icons.check_rounded,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      : null,
+                  onTap: () {
+                    Navigator.pop(context, type);
+                  },
+                );
+              }),
+
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (!mounted || selectedType == null) return;
+
+    setState(() {
+      _selectedRepeatType = selectedType;
+
+      if (selectedType == RepeatType.none) {
+        _repeatEndDate = null;
+      }
+    });
   }
 
   @override
@@ -265,6 +319,24 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                           _selectedDate = pickerDate;
                         });
                       }
+                    },
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Text('반복', style: textTheme.bodyMedium),
+                  const SizedBox(height: 8),
+
+                  PickerField(
+                    label: _selectedRepeatType.label,
+                    icon: Icons.repeat_rounded,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RepeatSettingPage(),
+                        ),
+                      );
                     },
                   ),
 
