@@ -47,8 +47,8 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
 
   ScheduleType _selectedType = ScheduleType.personal;
 
+  // ignore: prefer_final_fields
   RepeatType _selectedRepeatType = RepeatType.none;
-  DateTime? _repeatEndDate;
 
   TimeOfDay? _parseTime(String? time) {
     if (time == null) return null;
@@ -95,55 +95,6 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
     final minute = time.minute.toString().padLeft(2, '0');
 
     return '$hour:$minute:00';
-  }
-
-  Future<void> _showRepeatTypePicker() async {
-    final selectedType = await showModalBottomSheet<RepeatType>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '반복 설정',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-
-              const SizedBox(height: 16),
-
-              ...RepeatType.values.map((type) {
-                return ListTile(
-                  title: Text(type.label),
-                  trailing: _selectedRepeatType == type
-                      ? Icon(
-                          Icons.check_rounded,
-                          color: Theme.of(context).colorScheme.primary,
-                        )
-                      : null,
-                  onTap: () {
-                    Navigator.pop(context, type);
-                  },
-                );
-              }),
-
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (!mounted || selectedType == null) return;
-
-    setState(() {
-      _selectedRepeatType = selectedType;
-
-      if (selectedType == RepeatType.none) {
-        _repeatEndDate = null;
-      }
-    });
   }
 
   @override
