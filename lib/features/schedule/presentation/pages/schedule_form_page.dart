@@ -47,8 +47,8 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
 
   ScheduleType _selectedType = ScheduleType.personal;
 
-  // ignore: prefer_final_fields
   RepeatType _selectedRepeatType = RepeatType.none;
+  DateTime? _repeatEndDate;
 
   TimeOfDay? _parseTime(String? time) {
     if (time == null) return null;
@@ -159,6 +159,8 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                       type: isConnectedCouple
                           ? _selectedType
                           : ScheduleType.personal,
+                      repeatType: _selectedRepeatType,
+                      repeatEndDate: _repeatEndDate,
                     );
 
                     final updateRequest = ScheduleUpdateRequest(
@@ -281,13 +283,28 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                   PickerField(
                     label: _selectedRepeatType.label,
                     icon: Icons.repeat_rounded,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RepeatSettingPage(),
-                        ),
-                      );
+                    onTap: () async {
+                      final result =
+                          await Navigator.push<
+                            ({RepeatType repeatType, DateTime? repeatEndDate})
+                          >(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RepeatSettingPage(
+                                selectedRepeatType: _selectedRepeatType,
+                                selectedDate: _repeatEndDate,
+                              ),
+                            ),
+                          );
+
+                      if (!mounted) return;
+
+                      if (result != null) {
+                        setState(() {
+                          _selectedRepeatType = result.repeatType;
+                          _repeatEndDate = result.repeatEndDate;
+                        });
+                      }
                     },
                   ),
 

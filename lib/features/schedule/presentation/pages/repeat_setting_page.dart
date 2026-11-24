@@ -5,16 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RepeatSettingPage extends ConsumerStatefulWidget {
-  const RepeatSettingPage({super.key});
+  final RepeatType selectedRepeatType;
+  final DateTime? selectedDate;
+
+  const RepeatSettingPage({
+    super.key,
+    required this.selectedRepeatType,
+    this.selectedDate,
+  });
 
   @override
   ConsumerState<RepeatSettingPage> createState() => _RepeatSettingPageState();
 }
 
 class _RepeatSettingPageState extends ConsumerState<RepeatSettingPage> {
-  RepeatType _selectedRepeatType = RepeatType.none;
+  late RepeatType _selectedRepeatType;
+  DateTime? _selectedDate;
   bool _hasEndDate = false;
-  DateTime _selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedRepeatType = widget.selectedRepeatType;
+    _selectedDate = widget.selectedDate;
+    _hasEndDate = _selectedDate != null;
+  }
 
   Widget _buildSelctionTile({
     required String title,
@@ -43,91 +59,111 @@ class _RepeatSettingPageState extends ConsumerState<RepeatSettingPage> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('반복'),
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.maybePop(context),
-          icon: const Icon(CupertinoIcons.chevron_left),
-          color: AppColors.textIcon,
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-          child: ListView(
-            children: [
-              Text('반복 유형', style: textTheme.bodyMedium),
-              const SizedBox(height: 8),
-              Card(
-                margin: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    for (final type in RepeatType.values) ...[
-                      _buildSelctionTile(
-                        title: type.label,
-                        selected: _selectedRepeatType == type,
-                        onTap: () {
-                          setState(() {
-                            _selectedRepeatType = type;
-                          });
-                        },
-                      ),
-                      if (type != RepeatType.values.last)
-                        const Divider(height: 1, indent: 56, endIndent: 10),
-                    ],
-                  ],
-                ),
-              ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
 
-              if (_selectedRepeatType != RepeatType.none) ...[
-                const SizedBox(height: 25),
-                Text('기간', style: textTheme.bodyMedium),
+        Navigator.pop(context, (
+          repeatType: _selectedRepeatType,
+          repeatEndDate: _selectedDate,
+        ));
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('반복'),
+          centerTitle: false,
+          titleSpacing: 0,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context, (
+              repeatType: _selectedRepeatType,
+              repeatEndDate: _selectedDate,
+            )),
+            icon: const Icon(CupertinoIcons.chevron_left),
+            color: AppColors.textIcon,
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+            child: ListView(
+              children: [
+                Text('반복 유형', style: textTheme.bodyMedium),
                 const SizedBox(height: 8),
                 Card(
                   margin: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      _buildSelctionTile(
-                        title: '종료일 없음',
-                        selected: !_hasEndDate,
-                        onTap: () {
-                          setState(() {
-                            _hasEndDate = false;
-                          });
-                        },
-                      ),
-                      const Divider(height: 1, indent: 56, endIndent: 10),
-                      _buildSelctionTile(
-                        title: _hasEndDate
-                            ? '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}'
-                            : '종료일 지정',
-                        selected: _hasEndDate,
-                        onTap: () async {
-                          final pickerDate = await showDatePicker(
-                            context: context,
-                            initialDate: _selectedDate,
-                            firstDate: DateTime(2026),
-                            lastDate: DateTime(2100),
-                          );
-
-                          if (!mounted) return;
-
-                          if (pickerDate != null) {
+                      for (final type in RepeatType.values) ...[
+                        _buildSelctionTile(
+                          title: type.label,
+                          selected: _selectedRepeatType == type,
+                          onTap: () {
                             setState(() {
-                              _hasEndDate = true;
-                              _selectedDate = pickerDate;
+                              _selectedRepeatType = type;
+
+                              if (type == RepeatType.none) {
+                                _hasEndDate = false;
+                                _selectedDate = null;
+                              }
                             });
-                          }
-                        },
-                      ),
+                          },
+                        ),
+                        if (type != RepeatType.values.last)
+                          const Divider(height: 1, indent: 56, endIndent: 10),
+                      ],
                     ],
                   ),
                 ),
+
+                if (_selectedRepeatType != RepeatType.none) ...[
+                  const SizedBox(height: 25),
+                  Text('기간', style: textTheme.bodyMedium),
+                  const SizedBox(height: 8),
+                  Card(
+                    margin: EdgeInsets.zero,
+                    child: Column(
+                      children: [
+                        _buildSelctionTile(
+                          title: '종료일 없음',
+                          selected: !_hasEndDate,
+                          onTap: () {
+                            setState(() {
+                              _hasEndDate = false;
+                              _selectedDate = null;
+                            });
+                          },
+                        ),
+                        const Divider(height: 1, indent: 56, endIndent: 10),
+                        _buildSelctionTile(
+                          title: _hasEndDate
+                              ? '${_selectedDate?.year}-${_selectedDate?.month.toString().padLeft(2, '0')}-${_selectedDate?.day.toString().padLeft(2, '0')}'
+                              : '종료일 지정',
+                          selected: _hasEndDate,
+                          onTap: () async {
+                            final pickerDate = await showDatePicker(
+                              context: context,
+                              initialDate: widget.selectedDate,
+                              firstDate: DateTime(2026),
+                              lastDate: DateTime(2100),
+                            );
+
+                            if (!mounted) return;
+
+                            if (pickerDate != null) {
+                              setState(() {
+                                _hasEndDate = true;
+                                _selectedDate = pickerDate;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
