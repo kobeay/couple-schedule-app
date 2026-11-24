@@ -1,3 +1,4 @@
+import 'package:couple_schedule_app/features/schedule/data/models/repeat_type.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 
 class ScheduleUpdateRequest {
@@ -7,6 +8,8 @@ class ScheduleUpdateRequest {
   final String? endTime;
   final String? memo;
   final ScheduleType type;
+  final RepeatType repeatType;
+  final DateTime? repeatEndDate;
 
   const ScheduleUpdateRequest({
     required this.title,
@@ -15,6 +18,8 @@ class ScheduleUpdateRequest {
     this.endTime,
     this.memo,
     required this.type,
+    required this.repeatType,
+    this.repeatEndDate,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,6 +30,8 @@ class ScheduleUpdateRequest {
       'endTime': endTime,
       'memo': memo,
       'type': type.name.toUpperCase(),
+      'repeatType': repeatType.name.toUpperCase(),
+      'repeatEndDate': repeatEndDate?.toIso8601String().split('T')[0],
     };
   }
 }
