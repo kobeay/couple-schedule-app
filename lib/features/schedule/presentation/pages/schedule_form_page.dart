@@ -1,9 +1,11 @@
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/couple/presentation/providers/couple_provider.dart';
+import 'package:couple_schedule_app/features/schedule/data/models/repeat_type.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_create_request.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_list_response.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_type.dart';
 import 'package:couple_schedule_app/features/schedule/data/models/schedule_update_request.dart';
+import 'package:couple_schedule_app/features/schedule/presentation/pages/repeat_setting_page.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_create_notifier.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_delete_notifier.dart';
 import 'package:couple_schedule_app/features/schedule/presentation/providers/schedule_update_notifier.dart';
@@ -44,6 +46,9 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
   TimeOfDay? _endTime;
 
   ScheduleType _selectedType = ScheduleType.personal;
+
+  RepeatType _selectedRepeatType = RepeatType.none;
+  DateTime? _repeatEndDate;
 
   TimeOfDay? _parseTime(String? time) {
     if (time == null) return null;
@@ -154,6 +159,8 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                       type: isConnectedCouple
                           ? _selectedType
                           : ScheduleType.personal,
+                      repeatType: _selectedRepeatType,
+                      repeatEndDate: _repeatEndDate,
                     );
 
                     final updateRequest = ScheduleUpdateRequest(
@@ -263,6 +270,39 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                       if (pickerDate != null) {
                         setState(() {
                           _selectedDate = pickerDate;
+                        });
+                      }
+                    },
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Text('반복', style: textTheme.bodyMedium),
+                  const SizedBox(height: 8),
+
+                  PickerField(
+                    label: _selectedRepeatType.label,
+                    icon: Icons.repeat_rounded,
+                    onTap: () async {
+                      final result =
+                          await Navigator.push<
+                            ({RepeatType repeatType, DateTime? repeatEndDate})
+                          >(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RepeatSettingPage(
+                                selectedRepeatType: _selectedRepeatType,
+                                selectedDate: _repeatEndDate,
+                              ),
+                            ),
+                          );
+
+                      if (!mounted) return;
+
+                      if (result != null) {
+                        setState(() {
+                          _selectedRepeatType = result.repeatType;
+                          _repeatEndDate = result.repeatEndDate;
                         });
                       }
                     },
