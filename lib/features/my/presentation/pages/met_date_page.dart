@@ -7,14 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MetDatePage extends ConsumerStatefulWidget {
-  const MetDatePage({super.key});
+  final DateTime? metDate;
+
+  const MetDatePage({super.key, required this.metDate});
 
   @override
   ConsumerState<MetDatePage> createState() => _MetDatePageState();
 }
 
 class _MetDatePageState extends ConsumerState<MetDatePage> {
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedDate = widget.metDate ?? DateTime.now();
+  }
 
   @override
   Widget build(BuildContext context) {
