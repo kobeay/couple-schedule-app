@@ -7,11 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class RepeatSettingPage extends ConsumerStatefulWidget {
   final RepeatType selectedRepeatType;
   final DateTime? selectedDate;
+  final DateTime scheduleStartDate;
 
   const RepeatSettingPage({
     super.key,
     required this.selectedRepeatType,
     this.selectedDate,
+    required this.scheduleStartDate,
   });
 
   @override
@@ -143,8 +145,8 @@ class _RepeatSettingPageState extends ConsumerState<RepeatSettingPage> {
                           onTap: () async {
                             final pickerDate = await showDatePicker(
                               context: context,
-                              initialDate: widget.selectedDate,
-                              firstDate: DateTime(2026),
+                              initialDate: _selectedDate,
+                              firstDate: widget.scheduleStartDate,
                               lastDate: DateTime(2100),
                             );
 

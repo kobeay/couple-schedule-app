@@ -150,6 +150,18 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                       }
                     }
 
+                    if (_repeatEndDate != null &&
+                        DateUtils.dateOnly(
+                          _repeatEndDate!,
+                        ).isBefore(DateUtils.dateOnly(_selectedDate))) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('반복 종료일은 일정 시작일보다 빠를 수 없어요'),
+                        ),
+                      );
+                      return;
+                    }
+
                     final createRequest = ScheduleCreateRequest(
                       title: _titleController.text.trim(),
                       date: _selectedDate,
@@ -262,7 +274,7 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                         context: context,
                         initialDate: _selectedDate,
                         firstDate: DateTime(2020),
-                        lastDate: DateTime(2100),
+                        lastDate: _repeatEndDate ?? DateTime(2100),
                       );
 
                       if (!mounted) return;
@@ -293,6 +305,7 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                               builder: (context) => RepeatSettingPage(
                                 selectedRepeatType: _selectedRepeatType,
                                 selectedDate: _repeatEndDate,
+                                scheduleStartDate: _selectedDate,
                               ),
                             ),
                           );
