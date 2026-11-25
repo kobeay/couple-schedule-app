@@ -78,6 +78,10 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
       _memoController.text = schedule.memo ?? '';
 
       _selectedType = schedule.type;
+
+      _selectedRepeatType = schedule.repeatType;
+
+      _repeatEndDate = schedule.repeatEndDate;
     }
   }
 
@@ -184,6 +188,8 @@ class _ScheduleFormPageState extends ConsumerState<ScheduleFormPage> {
                       type: isConnectedCouple
                           ? _selectedType
                           : ScheduleType.personal,
+                      repeatType: _selectedRepeatType,
+                      repeatEndDate: _repeatEndDate,
                     );
 
                     if (widget.isEditing) {
