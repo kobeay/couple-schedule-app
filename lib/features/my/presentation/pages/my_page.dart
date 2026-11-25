@@ -119,7 +119,8 @@ class _MyPageState extends ConsumerState<MyPage> {
                             ? () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute<void>(
-                                    builder: (context) => const MetDatePage(),
+                                    builder: (context) =>
+                                        MetDatePage(metDate: metDate),
                                   ),
                                 );
                               }
