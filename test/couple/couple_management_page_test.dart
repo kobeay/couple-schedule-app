@@ -14,6 +14,7 @@ void main() {
     email: 'test@example.com',
     nickname: '테스트 사용자',
     inviteCode: 'ABCD1234',
+    profileImageUrl: null,
   );
 
   const disconnectedCouple = CoupleResponse(

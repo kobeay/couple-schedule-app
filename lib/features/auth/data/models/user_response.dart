@@ -3,7 +3,7 @@ class UserResponse {
   final String email;
   final String nickname;
   final String inviteCode;
-  final String profileImageUrl;
+  final String? profileImageUrl;
 
   const UserResponse({
     required this.id,
@@ -19,7 +19,7 @@ class UserResponse {
       email: json['email'] as String,
       nickname: json['nickname'] as String,
       inviteCode: json['inviteCode'] as String,
-      profileImageUrl: json['profileImageUrl'] as String,
+      profileImageUrl: json['profileImageUrl'] as String?,
     );
   }
 }
