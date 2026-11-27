@@ -4,12 +4,14 @@ class ProfileAvatar extends StatelessWidget {
   final String name;
   final Color backgroundColor;
   final Color foregroundColor;
+  final ImageProvider<Object>? backgroundImage;
 
   const ProfileAvatar({
     super.key,
     required this.name,
     required this.backgroundColor,
     required this.foregroundColor,
+    this.backgroundImage,
   });
 
   @override
@@ -19,14 +21,12 @@ class ProfileAvatar extends StatelessWidget {
     return Column(
       children: [
         CircleAvatar(
-          radius: 28,
+          radius: 30,
           backgroundColor: backgroundColor,
-          child: Text(
-            name,
-            style: textTheme.headlineMedium?.copyWith(color: foregroundColor),
-          ),
+          backgroundImage: backgroundImage,
+          child: backgroundImage == null ? Icon(Icons.person, size: 30) : null,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Text(name, style: textTheme.bodySmall),
       ],
     );

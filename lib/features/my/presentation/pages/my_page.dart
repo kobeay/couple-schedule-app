@@ -24,6 +24,7 @@ class _MyPageState extends ConsumerState<MyPage> {
 
     final couple = ref.watch(coupleProvider);
     final isConnectedCouple = couple.value?.connected == true;
+    final partnerProfileImageUrl = couple.value?.partnerProfileImageUrl;
 
     final metDate = couple.value?.metDate;
     final metDateText = !isConnectedCouple || metDate == null
@@ -35,6 +36,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     final user = ref.watch(userInfoProvider);
     final nickname = user.value?.nickname ?? '나';
     final email = user.value?.email ?? '';
+    final profileImageUrl = user.value?.profileImageUrl;
 
     return Scaffold(
       body: SafeArea(
@@ -57,6 +59,9 @@ class _MyPageState extends ConsumerState<MyPage> {
                                 name: nickname,
                                 backgroundColor: AppColors.myScheduleContainer,
                                 foregroundColor: AppColors.onMySchedule,
+                                backgroundImage: profileImageUrl != null
+                                    ? NetworkImage(profileImageUrl)
+                                    : null,
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 18),
@@ -70,6 +75,9 @@ class _MyPageState extends ConsumerState<MyPage> {
                                 backgroundColor:
                                     AppColors.partnerScheduleContainer,
                                 foregroundColor: AppColors.onPartnerSchedule,
+                                backgroundImage: partnerProfileImageUrl != null
+                                    ? NetworkImage(partnerProfileImageUrl)
+                                    : null,
                               ),
                             ],
                           ),
@@ -103,6 +111,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                               builder: (context) => ProfileEditPage(
                                 nickname: nickname,
                                 email: email,
+                                profileImageUrl: profileImageUrl,
                               ),
                             ),
                           );

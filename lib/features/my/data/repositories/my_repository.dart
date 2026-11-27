@@ -13,4 +13,12 @@ class MyRepository {
   Future<void> deleteUser() {
     return _myApi.deleteUser();
   }
+
+  Future<void> registerProfileImage(String filePath) {
+    return _myApi.registerProfileImage(filePath);
+  }
+
+  Future<void> updateProfileImage(String filePath) {
+    return _myApi.updateProfileImage(filePath);
+  }
 }
