@@ -35,6 +35,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     final user = ref.watch(userInfoProvider);
     final nickname = user.value?.nickname ?? '나';
     final email = user.value?.email ?? '';
+    final profileImageUrl = user.value?.profileImageUrl;
 
     return Scaffold(
       body: SafeArea(
@@ -103,6 +104,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                               builder: (context) => ProfileEditPage(
                                 nickname: nickname,
                                 email: email,
+                                profileImageUrl: profileImageUrl,
                               ),
                             ),
                           );

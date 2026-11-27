@@ -14,4 +14,12 @@ class MyApi {
   Future<void> deleteUser() async {
     await _dio.delete('/api/users/me');
   }
+
+  Future<void> registerProfileImage(String filePath) async {
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(filePath),
+    });
+
+    await _dio.post('/api/users/me/profile-image', data: formData);
+  }
 }

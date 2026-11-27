@@ -1,18 +1,24 @@
+import 'dart:io';
+
 import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/my/data/models/user_nickname_update_request.dart';
 import 'package:couple_schedule_app/features/my/presentation/providers/nickname_update_notifier.dart';
+import 'package:couple_schedule_app/features/my/presentation/providers/register_profile_image_notifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileEditPage extends ConsumerStatefulWidget {
   final String nickname;
   final String email;
+  final String? profileImageUrl;
 
   const ProfileEditPage({
     super.key,
     required this.nickname,
     required this.email,
+    required this.profileImageUrl,
   });
 
   @override
@@ -22,6 +28,99 @@ class ProfileEditPage extends ConsumerStatefulWidget {
 class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   final _nicknameController = TextEditingController();
   final _emailController = TextEditingController();
+
+  final _imagePicker = ImagePicker();
+  XFile? _selectedImage;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final image = await _imagePicker.pickImage(
+      source: source,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 80,
+    );
+
+    if (image == null || !mounted) return;
+
+    setState(() {
+      _selectedImage = image;
+    });
+  }
+
+  void _showImagePickerBottomSheet() {
+    final textTheme = Theme.of(context).textTheme;
+
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.gallery);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: SizedBox(
+                        width: 200,
+                        child: Row(
+                          children: [
+                            const Icon(CupertinoIcons.photo, size: 24),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                '갤러리에서 사진 선택',
+                                textAlign: TextAlign.center,
+                                style: textTheme.titleMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.camera);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: SizedBox(
+                        width: 200,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.camera_alt, size: 24),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                '카메라로 사진 촬영',
+                                textAlign: TextAlign.center,
+                                style: textTheme.titleMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -45,6 +144,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
 
     final nicknameUpdate = ref.watch(nicknameUpdateNotifier);
 
+    final profileImageState = ref.watch(registerProfileImageNotifier);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('내 프로필 수정'),
@@ -66,12 +167,39 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      child: Icon(Icons.person, size: 40),
+                    GestureDetector(
+                      onTap: _showImagePickerBottomSheet,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 70,
+                            backgroundImage: _selectedImage != null
+                                ? FileImage(File(_selectedImage!.path))
+                                : widget.profileImageUrl != null
+                                ? NetworkImage(widget.profileImageUrl!)
+                                : null,
+                            child:
+                                _selectedImage == null &&
+                                    widget.profileImageUrl == null
+                                ? const Icon(Icons.person, size: 70)
+                                : null,
+                          ),
+                          Positioned(
+                            right: 4,
+                            bottom: 4,
+                            child: CircleAvatar(
+                              radius: 17,
+                              backgroundColor: AppColors.textIcon,
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 5),
-                    const Text('프로필 사진 변경은 추후 지원 예정'),
                   ],
                 ),
 
@@ -115,14 +243,17 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
           child: FilledButton(
-            onPressed: nicknameUpdate.isLoading
+            onPressed: nicknameUpdate.isLoading || profileImageState.isLoading
                 ? null
                 : () async {
                     final nickname = _nicknameController.text.trim();
 
-                    if (nickname == widget.nickname) {
+                    final isNicknameChanged = nickname != widget.nickname;
+                    final isImageChanged = _selectedImage != null;
+
+                    if (!isNicknameChanged && !isImageChanged) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('기존 닉네임과 동일해요')),
+                        const SnackBar(content: Text('변경된 내용이 없어요')),
                       );
 
                       return;
@@ -136,27 +267,51 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       return;
                     }
 
-                    final request = UserNicknameUpdateRequest(
-                      nickname: nickname,
-                    );
-
-                    await ref
-                        .read(nicknameUpdateNotifier.notifier)
-                        .updateNickname(request);
-
-                    if (!context.mounted) return;
-
-                    final result = ref.read(nicknameUpdateNotifier);
-
-                    if (result.hasError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('닉네임을 수정하지 못했어요')),
+                    if (isNicknameChanged) {
+                      final request = UserNicknameUpdateRequest(
+                        nickname: nickname,
                       );
 
-                      return;
+                      await ref
+                          .read(nicknameUpdateNotifier.notifier)
+                          .updateNickname(request);
+
+                      if (!context.mounted) return;
+
+                      final result = ref.read(nicknameUpdateNotifier);
+
+                      if (result.hasError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('닉네임을 수정하지 못했어요')),
+                        );
+
+                        return;
+                      }
                     }
+
+                    if (isImageChanged) {
+                      await ref
+                          .read(registerProfileImageNotifier.notifier)
+                          .registerProfileImage(_selectedImage!.path);
+
+                      if (!context.mounted) return;
+
+                      final result = ref.read(registerProfileImageNotifier);
+
+                      if (result.hasError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('프로필 사진을 변경하지 못했어요')),
+                        );
+
+                        return;
+                      }
+                    }
+
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('프로필을 수정했어요')));
                   },
-            child: nicknameUpdate.isLoading
+            child: nicknameUpdate.isLoading || profileImageState.isLoading
                 ? const SizedBox(
                     width: 20,
                     height: 20,
