@@ -94,6 +94,29 @@ class _MyPageState extends ConsumerState<MyPage> {
                       ),
                     ),
                   ),
+                ] else ...[
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ProfileAvatar(
+                                name: nickname,
+                                backgroundColor: AppColors.myScheduleContainer,
+                                foregroundColor: AppColors.onMySchedule,
+                                backgroundImage: profileImageUrl != null
+                                    ? NetworkImage(profileImageUrl)
+                                    : null,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
 
                 const SizedBox(height: 16),
