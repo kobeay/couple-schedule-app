@@ -17,4 +17,8 @@ class MyRepository {
   Future<void> registerProfileImage(String filePath) {
     return _myApi.registerProfileImage(filePath);
   }
+
+  Future<void> updateProfileImage(String filePath) {
+    return _myApi.updateProfileImage(filePath);
+  }
 }

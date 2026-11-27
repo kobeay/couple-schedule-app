@@ -22,4 +22,12 @@ class MyApi {
 
     await _dio.post('/api/users/me/profile-image', data: formData);
   }
+
+  Future<void> updateProfileImage(String filePath) async {
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(filePath),
+    });
+
+    await _dio.patch('/api/users/me/profile-image', data: formData);
+  }
 }

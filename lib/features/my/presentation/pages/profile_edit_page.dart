@@ -4,6 +4,7 @@ import 'package:couple_schedule_app/app/theme/app_colors.dart';
 import 'package:couple_schedule_app/features/my/data/models/user_nickname_update_request.dart';
 import 'package:couple_schedule_app/features/my/presentation/providers/nickname_update_notifier.dart';
 import 'package:couple_schedule_app/features/my/presentation/providers/register_profile_image_notifier.dart';
+import 'package:couple_schedule_app/features/my/presentation/providers/update_profile_image_notifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -142,9 +143,15 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    final nicknameUpdate = ref.watch(nicknameUpdateNotifier);
+    final nicknameUpdateState = ref.watch(nicknameUpdateNotifier);
 
-    final profileImageState = ref.watch(registerProfileImageNotifier);
+    final registerProfileImageState = ref.watch(registerProfileImageNotifier);
+    final updateProfileImageState = ref.watch(updateProfileImageNotifier);
+
+    final isLoading =
+        nicknameUpdateState.isLoading ||
+        registerProfileImageState.isLoading ||
+        updateProfileImageState.isLoading;
 
     return Scaffold(
       appBar: AppBar(
@@ -243,7 +250,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
           child: FilledButton(
-            onPressed: nicknameUpdate.isLoading || profileImageState.isLoading
+            onPressed: isLoading
                 ? null
                 : () async {
                     final nickname = _nicknameController.text.trim();
@@ -290,20 +297,38 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                     }
 
                     if (isImageChanged) {
-                      await ref
-                          .read(registerProfileImageNotifier.notifier)
-                          .registerProfileImage(_selectedImage!.path);
+                      if (widget.profileImageUrl == null) {
+                        await ref
+                            .read(registerProfileImageNotifier.notifier)
+                            .registerProfileImage(_selectedImage!.path);
 
-                      if (!context.mounted) return;
+                        if (!context.mounted) return;
 
-                      final result = ref.read(registerProfileImageNotifier);
+                        final result = ref.read(registerProfileImageNotifier);
 
-                      if (result.hasError) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('프로필 사진을 변경하지 못했어요')),
-                        );
+                        if (result.hasError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('프로필 사진을 변경하지 못했어요')),
+                          );
 
-                        return;
+                          return;
+                        }
+                      } else {
+                        await ref
+                            .read(updateProfileImageNotifier.notifier)
+                            .updateProfileImage(_selectedImage!.path);
+
+                        if (!context.mounted) return;
+
+                        final result = ref.read(updateProfileImageNotifier);
+
+                        if (result.hasError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('프로필 사진을 변경하지 못했어요')),
+                          );
+
+                          return;
+                        }
                       }
                     }
 
@@ -311,7 +336,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       context,
                     ).showSnackBar(const SnackBar(content: Text('프로필을 수정했어요')));
                   },
-            child: nicknameUpdate.isLoading || profileImageState.isLoading
+            child: isLoading
                 ? const SizedBox(
                     width: 20,
                     height: 20,

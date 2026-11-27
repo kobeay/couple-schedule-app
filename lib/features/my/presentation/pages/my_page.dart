@@ -58,6 +58,9 @@ class _MyPageState extends ConsumerState<MyPage> {
                                 name: nickname,
                                 backgroundColor: AppColors.myScheduleContainer,
                                 foregroundColor: AppColors.onMySchedule,
+                                backgroundImage: profileImageUrl != null
+                                    ? NetworkImage(profileImageUrl)
+                                    : null,
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 18),
