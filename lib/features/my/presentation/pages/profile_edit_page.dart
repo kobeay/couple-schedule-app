@@ -335,6 +335,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(const SnackBar(content: Text('프로필을 수정했어요')));
+
+                    Navigator.pop(context);
                   },
             child: isLoading
                 ? const SizedBox(

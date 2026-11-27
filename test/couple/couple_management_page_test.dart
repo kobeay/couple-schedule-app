@@ -22,6 +22,7 @@ void main() {
     partnerNickname: null,
     connectedAt: null,
     metDate: null,
+    partnerProfileImageUrl: null,
   );
 
   final connectedCouple = CoupleResponse(
@@ -29,6 +30,7 @@ void main() {
     partnerNickname: '민수',
     connectedAt: DateTime(2025, 3, 7),
     metDate: DateTime(2025, 4, 19),
+    partnerProfileImageUrl: null,
   );
 
   Future<void> pumpPage(WidgetTester tester, CoupleResponse couple) async {

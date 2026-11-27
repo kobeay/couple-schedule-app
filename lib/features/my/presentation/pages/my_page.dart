@@ -24,6 +24,7 @@ class _MyPageState extends ConsumerState<MyPage> {
 
     final couple = ref.watch(coupleProvider);
     final isConnectedCouple = couple.value?.connected == true;
+    final partnerProfileImageUrl = couple.value?.partnerProfileImageUrl;
 
     final metDate = couple.value?.metDate;
     final metDateText = !isConnectedCouple || metDate == null
@@ -74,6 +75,9 @@ class _MyPageState extends ConsumerState<MyPage> {
                                 backgroundColor:
                                     AppColors.partnerScheduleContainer,
                                 foregroundColor: AppColors.onPartnerSchedule,
+                                backgroundImage: partnerProfileImageUrl != null
+                                    ? NetworkImage(partnerProfileImageUrl)
+                                    : null,
                               ),
                             ],
                           ),
